@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { breakpoints, borderRadius } from '@kinsta/stratus'
+import { breakpoints, borderRadius, color } from '@kinsta/stratus'
 
 export const PageWrapper = styled.div({
   width: '100%',
@@ -28,14 +28,9 @@ export const HeroContainer = styled.div({
   marginBottom: 'auto',
   justifyItems: 'center',
   textAlign: 'center',
-  fontSize: '50px',
   [breakpoints.m.up]: {
     display: 'flex',
     textAlign: 'left',
-  },
-  [breakpoints.xl.up]: {
-    fontSize: '95px',
-    gap: '0px'
   },
 });
 
@@ -46,6 +41,14 @@ export const MarketingTextsDiv = styled.div({
   alignItems: 'center',
   marginTop: 'auto',
   marginBottom: 'auto',
+  fontSize: '50px',
+  [breakpoints.m.up]: {
+    textAlign: 'left',
+  },
+  [breakpoints.xl.up]: {
+    fontSize: '95px',
+    gap: '0px'
+  },
 });
 
 export const PictureDiv = styled.div({
@@ -57,5 +60,16 @@ export const PictureDiv = styled.div({
   [breakpoints.m.up]: {
     width: '500px',
     height: '500px',
+  },
+});
+
+export const FeatureCardDiv = styled.div({
+  display: 'grid',
+  gap: '16px',
+  color: color.anthracite,
+  marginTop: '50px',
+  [breakpoints.m.up]: {
+    display: 'flex',
+    textAlign: 'left',
   },
 });

@@ -5,12 +5,14 @@ import {
   NavContainer,
   HeroContainer,
   MarketingTextsDiv,
-  PictureDiv
+  PictureDiv,
+  FeatureCardDiv
 } from './home.styles';
-import { Button } from '../components/Button';
 import Link from 'next/link'
-import { Heading } from '@kinsta/stratus';
+import { Heading, Button, Stack, Card } from '@kinsta/stratus';
 import Image from 'next/image'
+import { Features } from '@/data/features';
+import { css } from '@emotion/react';
 
 export default function Home() {
   return (
@@ -23,7 +25,7 @@ export default function Home() {
       </NavContainer>
       <HeroContainer>
         <MarketingTextsDiv>
-          <div>Organize your wishes. Buy smarter.</div>
+          <Heading>Organize your wishes. Buy smarter.</Heading>
           <Heading size='xs'>Create wishlists, set priorities,<br /> and track prices — all in one simple place.</Heading>
         </MarketingTextsDiv>
         <PictureDiv>
@@ -34,6 +36,14 @@ export default function Home() {
           />
         </PictureDiv>
       </HeroContainer>
+      <FeatureCardDiv>
+        {Features.map((feature, index) => (
+          <Card key={index}>
+            <h3>{feature.title}</h3>
+            <p>{feature.description}</p>
+          </Card>
+        ))}
+      </FeatureCardDiv>
     </PageWrapper>
   );
 }
