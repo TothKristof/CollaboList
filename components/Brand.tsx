@@ -1,17 +1,19 @@
 import React from 'react'
-import { Icon } from '@kinsta/stratus'
+import { Icon, borderRadius } from '@kinsta/stratus'
 import styled from '@emotion/styled';
 
- const LogoDiv = styled.div`
-  padding: 24px;
-  display: flex;
-  gap: 16px;
-  font-family: var(--font-inter), sans-serif;
-  align-items: center;
-  font-size: 24px;
-`;
+const LogoDiv = styled.div({
+    padding: '10px',
+    display: 'flex',
+    gap: '16px',
+    alignItems: 'center',
+    fontSize: '18px',
+    backgroundColor: 'white',
+    color: 'black',
+    borderRadius: borderRadius.l
+});
 
-function Logo() {
+function Brand() {
     return (
         <LogoDiv>
             <Icon type='List'></Icon>
@@ -20,4 +22,4 @@ function Logo() {
     )
 }
 
-export default Logo
+export default Brand
