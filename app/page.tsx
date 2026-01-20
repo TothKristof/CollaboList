@@ -9,10 +9,9 @@ import {
   FeatureCardDiv
 } from './home.styles';
 import Link from 'next/link'
-import { Heading, Button, Stack, Card } from '@kinsta/stratus';
+import { Heading, Button, Card } from '@kinsta/stratus';
 import Image from 'next/image'
 import { Features } from '@/data/features';
-import { css } from '@emotion/react';
 
 export default function Home() {
   return (
@@ -20,7 +19,7 @@ export default function Home() {
       <NavContainer>
         <Brand />
         <Link href="/login">
-          <Button>Login</Button>
+          <Button>Sign in</Button>
         </Link>
       </NavContainer>
       <HeroContainer>

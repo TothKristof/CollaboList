@@ -2,11 +2,6 @@ import styled from '@emotion/styled';
 import { breakpoints, borderRadius, color } from '@kinsta/stratus'
 
 export const PageWrapper = styled.div({
-  width: '100%',
-  height: '100%',
-  padding: '24px',
-  boxSizing: 'border-box',
-  justifyContent: 'center',
   justifyItems: 'center',
 });
 
@@ -20,17 +15,15 @@ export const NavContainer = styled.div({
 export const HeroContainer = styled.div({
   display: 'grid',
   gap: '16px',
-  justifyContent: 'space-around',
   maxWidth: '1400px',
-  width: '100%',
   alignItems: 'center',
   marginTop: '50px',
-  marginBottom: 'auto',
   justifyItems: 'center',
   textAlign: 'center',
   [breakpoints.m.up]: {
     display: 'flex',
     textAlign: 'left',
+    gap: '0px'
   },
 });
 
