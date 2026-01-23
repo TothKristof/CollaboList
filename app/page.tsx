@@ -11,17 +11,18 @@ import {
 import Link from 'next/link'
 import { Heading, Button, Card } from '@kinsta/stratus';
 import Image from 'next/image'
-import { Features } from '@/data/features';
+import { features } from '@/data/features';
+import { RowWithSpaceBetween } from './global.styles';
 
 export default function Home() {
   return (
     <PageWrapper>
-      <NavContainer>
+      <RowWithSpaceBetween>
         <Brand />
         <Link href="/login">
           <Button>Sign in</Button>
         </Link>
-      </NavContainer>
+      </RowWithSpaceBetween>
       <HeroContainer>
         <MarketingTextsDiv>
           <Heading>Organize your wishes. Buy smarter.</Heading>
@@ -36,7 +37,7 @@ export default function Home() {
         </PictureDiv>
       </HeroContainer>
       <FeatureCardDiv>
-        {Features.map((feature, index) => (
+        {features.map((feature, index) => (
           <Card key={index}>
             <h3>{feature.title}</h3>
             <p>{feature.description}</p>
