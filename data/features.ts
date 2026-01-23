@@ -1,6 +1,6 @@
-import { FeatureList } from "@/types/featureType"
+import { Feature } from "@/types/featureType"
 
-export const Features: FeatureList[] = [
+export const features: Feature[] = [
   {
     title: "Smart Wishlists",
     description: "Create and manage wishlists with clear priorities for better purchase planning."
