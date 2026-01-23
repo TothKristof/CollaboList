@@ -5,13 +5,6 @@ export const PageWrapper = styled.div({
   justifyItems: 'center',
 });
 
-export const NavContainer = styled.div({
-  display: 'flex',
-  justifyContent: 'space-between',
-  width: '100%',
-  alignItems: 'center',
-});
-
 export const HeroContainer = styled.div({
   display: 'grid',
   gap: '16px',
