@@ -29,14 +29,6 @@ function Login() {
 
   const [error, setError] = useState<string | null>(null);
 
-  const { isAuthenticated } = useAuth();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.replace("/main");
-    }
-  }, [isAuthenticated]);
-
   function onLogin() {
     const user = users.find(
       (u) =>

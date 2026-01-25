@@ -1,8 +1,6 @@
 "use client";
 import Brand from '../components/Brand';
 import {
-  PageWrapper,
-  NavContainer,
   HeroContainer,
   MarketingTextsDiv,
   PictureDiv,
@@ -12,16 +10,25 @@ import Link from 'next/link'
 import { Heading, Button, Card } from '@kinsta/stratus';
 import Image from 'next/image'
 import { features } from '@/data/features';
-import { RowWithSpaceBetween } from './global.styles';
+import { RowWithSpaceBetween, CenterContentDiv } from './global.styles';
+import { useAuth } from '@/context/authContext';
 
 export default function Home() {
+  const { isAuthenticated } = useAuth();
   return (
-    <PageWrapper>
+    <CenterContentDiv>
       <RowWithSpaceBetween>
         <Brand />
-        <Link href="/login">
-          <Button>Sign in</Button>
-        </Link>
+        {isAuthenticated ? (
+          <Link href="/main">
+            <Button>Sign in</Button>
+          </Link>
+        ) : (
+          <Link href="/login">
+            <Button>Sign in</Button>
+          </Link>
+        )}
+
       </RowWithSpaceBetween>
       <HeroContainer>
         <MarketingTextsDiv>
@@ -44,6 +51,6 @@ export default function Home() {
           </Card>
         ))}
       </FeatureCardDiv>
-    </PageWrapper>
+    </CenterContentDiv>
   );
 }
