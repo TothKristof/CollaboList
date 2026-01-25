@@ -6,3 +6,19 @@ export const RowWithSpaceBetween = styled.div({
   width: '100%',
   alignItems: 'center',
 });
+
+export const Card = styled.div({
+  flex: 1,
+  height: 200,
+  backgroundColor: "#ffffff",
+  borderRadius: 16,
+});
+
+
+export const CenterContentDiv = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100%'
+});

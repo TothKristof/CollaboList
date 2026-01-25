@@ -1,10 +1,6 @@
 import styled from '@emotion/styled';
 import { breakpoints, borderRadius, color } from '@kinsta/stratus'
 
-export const PageWrapper = styled.div({
-  justifyItems: 'center',
-});
-
 export const HeroContainer = styled.div({
   display: 'grid',
   gap: '16px',
