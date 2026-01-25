@@ -1,6 +1,7 @@
 import React from 'react'
 import { Icon, borderRadius } from '@kinsta/stratus'
 import styled from '@emotion/styled';
+import { NotebookText } from 'lucide-react';
 
 const LogoDiv = styled.div({
     padding: '10px',
@@ -16,7 +17,7 @@ const LogoDiv = styled.div({
 function Brand() {
     return (
         <LogoDiv>
-            <Icon type='List'></Icon>
+            <NotebookText ></NotebookText>
             <div>CollaboList</div>
         </LogoDiv>
     )
