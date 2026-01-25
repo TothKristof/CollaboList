@@ -11,12 +11,13 @@ import {
   ContentWrapper,
   MainColumn,
   RightColumn,
-  Card,
   CardRow,
 } from "./main.styles";
 import { RowWithSpaceBetween } from '../global.styles';
 import RecentlyAddedItemDiv from '@/components/RecentlyAddedItemDiv';
 import { items } from '@/data/items';
+import { Card } from '../global.styles';
+import ListListingDiv from '@/components/ListListingDiv';
 
 
 function page() {
@@ -41,11 +42,11 @@ function page() {
       </RowWithSpaceBetween>
 
       <ContentWrapper>
-        <Sidebar />
         <MainColumn>
-          <CardRow>
+          {/* <CardRow>
             <Card />
-          </CardRow>
+          </CardRow> */}
+          <ListListingDiv></ListListingDiv>
           <RecentlyAddedItemDiv items = {items}></RecentlyAddedItemDiv>
         </MainColumn>
 

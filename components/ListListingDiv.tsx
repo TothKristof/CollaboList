@@ -1,0 +1,97 @@
+import { Modal, Input, AutoComplete, Button } from '@kinsta/stratus'
+import styled from "@emotion/styled";
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { categories } from '@/data/categories';
+import { lists } from '@/data/lists';
+import Link from 'next/link';
+
+const ListsDiv = styled.div({
+    display: 'flex',
+    height: 200,
+    width: '100%',
+    borderRadius: 16,
+    padding: 10,
+    flexShrink: 0,
+    backgroundColor: '#ffffff',
+    color: 'rgb(230, 209, 199)',
+    gap: 10,
+    overflowX: 'scroll'
+});
+
+const ListDiv = styled.div({
+    display: 'flex',
+    flexDirection: 'column',
+    minWidth: 200,
+    flexShrink: 0,
+    borderRadius: 16,
+    padding: 10,
+    backgroundColor: '#ffffff',
+    color: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+    border: 'solid 4px',
+    cursor: 'pointer'
+});
+
+const FormDiv = styled.div({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
+    width: 300,
+    margin: 'auto'
+});
+
+
+const ListLink = styled(Link)({
+    display: 'flex',
+    textDecoration: 'none',
+});
+
+
+function ListListingDiv() {
+    const [isVisible, setIsVisible] = useState(false)
+    const categoryList = Object.keys(categories);
+    return (
+        <>
+            <ListsDiv>
+                <ListDiv onClick={() => setIsVisible(!isVisible)}>
+                    <Plus size={48}></Plus>
+                </ListDiv>
+                {lists.map((list, index) => {
+                    const Icon = categories[list.category].icon;
+                    return (
+                        <ListLink href={`/lists/${list.id}`}>
+                            <ListDiv key={index}>
+                                <Icon size={32} />
+                                <div>{list.name}</div>
+                            </ListDiv>
+                        </ListLink>
+                    );
+                })}
+            </ListsDiv>
+            <Modal
+                isVisible={isVisible}
+                title="Add new list" isClosable={true}
+                onOk={() => setIsVisible(!isVisible)}
+                okText={'Add new list'}
+                onCancel={() => setIsVisible(!isVisible)}
+            >
+                <FormDiv>
+                    <Input
+                        label={'List name'}
+                        placeholder="Type something"
+                    />
+                    <AutoComplete
+                        label={'List items category (optional)'}
+                        searchIndex={categoryList}
+                    >
+
+                    </AutoComplete>
+                </FormDiv>
+            </Modal>
+        </>
+    )
+}
+
+export default ListListingDiv

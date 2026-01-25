@@ -3,8 +3,9 @@ import styled from "@emotion/styled";
 import { RowWithSpaceBetween } from '@/app/global.styles'
 import { Heading, Table } from '@kinsta/stratus';
 import { Item } from '@/types/itemType';
+import { categories } from '@/data/categories';
 import type {
-  TableColumnDef,
+    TableColumnDef,
 } from '@kinsta/stratus'
 
 const RecentlyAddedItems = styled.div({
@@ -25,25 +26,30 @@ function RecentlyAddedItemDiv({ items }: Props) {
 
     const columns: TableColumnDef<Item>[] = [
         {
-            id: 'category',
-            header: '',
+            id: "category",
+            header: "",
             cell: ({ row }) => {
-                const Icon = row.original.category?.icon
+                const categoryKey = row.original.category;
 
-                return Icon ? (
+                if (!categoryKey) return null;
+
+                const Icon = categories[categoryKey].icon;
+
+                return (
                     <div
                         style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                         }}
+                        title={`${categoryKey} category`}
                     >
-                        <Icon color="black" size={16} />
+                        <Icon size={24}/>
                     </div>
-                ) : null
+                );
             },
         },
-        
+
         {
             id: 'name',
             header: 'Name',
@@ -52,6 +58,7 @@ function RecentlyAddedItemDiv({ items }: Props) {
         {
             id: 'lastUpdated',
             header: 'Last updated',
+            accessorKey: 'lastUpdated',
             cell: ({ row }) =>
                 row.original.lastUpdatedDate.toDateString(),
         },
@@ -64,6 +71,7 @@ function RecentlyAddedItemDiv({ items }: Props) {
         {
             id: 'price',
             header: 'Price',
+            accessorKey: 'price',
             cell: ({ row }) => `${row.original.price} HUF`,
         },
     ]
@@ -71,8 +79,6 @@ function RecentlyAddedItemDiv({ items }: Props) {
         <RecentlyAddedItems>
             <RowWithSpaceBetween>
                 <Heading size='l'>Recently Added Items</Heading>
-                <div>Search placeholder</div>
-                <div>hy</div>
             </RowWithSpaceBetween>
             <Table<Item>
                 columns={columns}

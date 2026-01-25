@@ -4,8 +4,10 @@ export const PageWrapper = styled.div({
   display: "flex",
   flexDirection: 'column',
   width: "100%",
+  maxWidth: "100%",
   backgroundColor: 'rgb(230, 209, 199)',
   gap: 24,
+  overflow: 'hidden',
 });
 
 export const Sidebar = styled.div({
@@ -16,12 +18,14 @@ export const Sidebar = styled.div({
 
 export const ContentWrapper = styled.div({
   flex: 1,
+  minWidth: 0,
   display: "flex",
   gap: 24,
 });
 
 export const MainColumn = styled.div({
   flex: 3,
+  minWidth: 0,
   display: "flex",
   flexDirection: "column",
   gap: 24,
@@ -37,11 +41,4 @@ export const RightColumn = styled.div({
 export const CardRow = styled.div({
   display: "flex",
   gap: 24,
-});
-
-export const Card = styled.div({
-  flex: 1,
-  height: 200,
-  backgroundColor: "#ffffff",
-  borderRadius: 16,
 });
