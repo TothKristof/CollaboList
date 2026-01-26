@@ -1,12 +1,20 @@
 import { Item } from '@/types/itemType'
-import { Table, TableColumnDef, Tooltip } from '@kinsta/stratus'
+import { Button, Input, Stack, Table, TableColumnDef, Tooltip } from '@kinsta/stratus'
 import { categories } from '@/data/categories'
+import { Check, Edit, Globe, Icon, Trash } from 'lucide-react';
+import { useState } from 'react';
 
 interface TableProps {
     tableData: Item[];
+    actions?: {
+        onEditPrice: (item: Item) => void;
+        onDelete: (item: Item) => void;
+    };
 }
 
-function ItemTable({ tableData }: TableProps) {
+
+function ItemTable({ tableData, actions }: TableProps) {
+    const [editedItemId, setEditedItemId] = useState<number | null>(null);
     const columns: TableColumnDef<Item>[] = [
         {
             id: "category",
@@ -17,7 +25,7 @@ function ItemTable({ tableData }: TableProps) {
                 if (!categoryKey) return null;
 
                 const Icon = categories[categoryKey].icon;
-
+                const color = categories[categoryKey].color;
                 return (
                     <Tooltip content={`${categoryKey} category`}>
                         <div
@@ -27,7 +35,7 @@ function ItemTable({ tableData }: TableProps) {
                                 justifyContent: "center",
                             }}
                         >
-                            <Icon size={24} />
+                            <Icon size={24}  color={color}/>
                         </div>
                     </Tooltip>
                 );
@@ -56,9 +64,84 @@ function ItemTable({ tableData }: TableProps) {
             id: 'price',
             header: 'Price',
             accessorKey: 'price',
-            cell: ({ row }) => `${row.original.price} HUF`,
+            cell: ({ row }) => {
+                const item = row.original;
+                if (editedItemId == item.id) {
+                    const [editedPrice, setEditedPrice] = useState<number>(item.price);
+                    return (
+                        <Stack direction='row'>
+                            <input
+                                type="number"
+                                value={editedPrice}
+                                onChange={(e) => setEditedPrice(Number(e.target.value))}
+                            />
+                            <Button
+                                onClick={() => {
+                                    actions?.onEditPrice({
+                                        ...item,
+                                        price: editedPrice,
+                                    });
+                                    setEditedItemId(null);
+                                }}
+                            >
+                                <Check size={18}></Check>
+                            </Button>
+                        </Stack>
+                    )
+                }
+                return `${row.original.price} HUF`
+            },
         },
+        {
+            id: "actions",
+            header: "",
+            cell: ({ row }) => {
+                const item = row.original;
+
+                if (!actions) {
+                    return null;
+                }
+
+                return (
+                    <div style={{ display: "flex", gap: 8 }}>
+
+                        {/* External link */}
+                        <Tooltip content="Check price on web">
+                            <Button
+                                href={item.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Globe size={18}></Globe>
+                            </Button>
+                        </Tooltip>
+
+                        {/* Edit price */}
+                        <Tooltip content="Edit price">
+                            <Button
+                                type='secondary'
+                                onClick={() => setEditedItemId(item.id)}
+                            >
+                                <Edit size={18}></Edit>
+                            </Button>
+                        </Tooltip>
+
+                        {/* Delete */}
+                        <Tooltip content="Delete item">
+                            <Button
+                                type='danger'
+                                onClick={() => actions?.onDelete(item)}
+                            >
+                                <Trash size={18}></Trash>
+                            </Button>
+                        </Tooltip>
+                    </div>
+                );
+            },
+        },
+
     ]
+
     return (
         <Table<Item>
             columns={columns}
