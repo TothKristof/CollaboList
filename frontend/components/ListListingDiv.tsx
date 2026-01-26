@@ -63,10 +63,11 @@ function ListListingDiv() {
                 </ListDiv>
                 {userLists.map((list, index) => {
                     const Icon = categories[list.category].icon;
+                    const color = categories[list.category].color;
                     return (
                         <ListLink key={index} href={`/lists/${list.id}`}>
                             <ListDiv>
-                                <Icon size={32} />
+                                <Icon size={32} color={color}/>
                                 <div>{list.name}</div>
                             </ListDiv>
                         </ListLink>
