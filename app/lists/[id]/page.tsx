@@ -5,6 +5,7 @@ import { List } from '@/types/listType';
 import { ListDiv } from './list.styles';
 import { CenterContentDiv, RowWithSpaceBetween } from '@/app/global.styles';
 import { Heading } from '@kinsta/stratus';
+import ItemTable from '@/components/ItemTable';
 
 function page() {
     let params = useParams();
@@ -22,6 +23,7 @@ function page() {
                     <Heading size='l'>{list.name}</Heading>
                     <div>Item count: {list.items.length}</div>
                 </RowWithSpaceBetween>
+                <ItemTable tableData={list.items}></ItemTable>
             </ListDiv>
         </CenterContentDiv>
     )
