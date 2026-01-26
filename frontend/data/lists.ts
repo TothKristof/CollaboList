@@ -9,6 +9,12 @@ export const lists: List[] = [
         category: "Gaming",
         items: [items[0],items[1]]
     },
+        {
+        id: 2,
+        name: 'Home',
+        category: "HomeLiving",
+        items: [items[0]]
+    },
 
 ]
 

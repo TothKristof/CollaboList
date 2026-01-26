@@ -16,6 +16,7 @@ import { items } from '@/data/items';
 import { CustomCard } from '../global.styles';
 import ListListingDiv from '@/components/ListListingDiv';
 import { UserMenu } from '@/components/UserMenu';
+import PieChartComponent from '@/components/PieChart';
 
 
 function page() {
@@ -45,7 +46,9 @@ function page() {
         </MainColumn>
 
         <RightColumn>
-          <CustomCard />
+          <CustomCard >
+            <PieChartComponent></PieChartComponent>
+          </CustomCard>
           <CustomCard />
           <CustomCard />
         </RightColumn>
