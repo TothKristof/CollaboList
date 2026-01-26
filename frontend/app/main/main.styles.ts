@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { borderRadius } from "@kinsta/stratus";
 
 export const PageWrapper = styled.div({
   display: "flex",
@@ -41,4 +42,14 @@ export const RightColumn = styled.div({
 export const CardRow = styled.div({
   display: "flex",
   gap: 24,
+});
+
+export const AvatarSegment = styled.div({
+  display: 'flex',
+  backgroundColor: 'white',
+  borderRadius: borderRadius.l,
+  gap: 10,
+  padding: 10,
+  paddingInline: 30,
+  cursor: 'pointer'
 });

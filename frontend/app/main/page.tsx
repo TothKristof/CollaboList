@@ -4,26 +4,23 @@ import { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authContext";
 import Brand from '@/components/Brand';
-import { Stack, Avatar} from '@kinsta/stratus';
 import {
   PageWrapper,
-  Sidebar,
   ContentWrapper,
   MainColumn,
   RightColumn,
-  CardRow,
 } from "./main.styles";
 import { RowWithSpaceBetween } from '../global.styles';
 import RecentlyAddedItemDiv from '@/components/RecentlyAddedItemDiv';
 import { items } from '@/data/items';
-import { Card } from '../global.styles';
+import { CustomCard } from '../global.styles';
 import ListListingDiv from '@/components/ListListingDiv';
+import { UserMenu } from '@/components/UserMenu';
 
 
 function page() {
   const router = useRouter();
   const { isAuthenticated, user } = useAuth();
-  const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -35,10 +32,7 @@ function page() {
     <PageWrapper>
       <RowWithSpaceBetween>
         <Brand></Brand>
-        <Stack direction='row' >
-          <div>{user?.email}</div>
-          <Avatar></Avatar>
-        </Stack>
+        <UserMenu email={user?.email}></UserMenu>
       </RowWithSpaceBetween>
 
       <ContentWrapper>
@@ -47,13 +41,13 @@ function page() {
             <Card />
           </CardRow> */}
           <ListListingDiv></ListListingDiv>
-          <RecentlyAddedItemDiv items = {items}></RecentlyAddedItemDiv>
+          <RecentlyAddedItemDiv items={items}></RecentlyAddedItemDiv>
         </MainColumn>
 
         <RightColumn>
-          <Card />
-          <Card />
-          <Card />
+          <CustomCard />
+          <CustomCard />
+          <CustomCard />
         </RightColumn>
       </ContentWrapper>
     </PageWrapper>

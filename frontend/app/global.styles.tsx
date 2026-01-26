@@ -7,7 +7,7 @@ export const RowWithSpaceBetween = styled.div({
   alignItems: 'center',
 });
 
-export const Card = styled.div({
+export const CustomCard = styled.div({
   flex: 1,
   height: 200,
   backgroundColor: "#ffffff",
