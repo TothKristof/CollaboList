@@ -4,6 +4,7 @@ import { lists } from "./lists";
 export const items: Item[] = [
     {
         id: 1,
+        ownerId: 1,
         name: "Wireless Mouse",
         price: 7990,
         category: "Gaming",
@@ -12,6 +13,7 @@ export const items: Item[] = [
     },
     {
         id: 2,
+        ownerId: 1,
         name: "Mechanical Keyboard",
         price: 29990,
         category: "Gaming",

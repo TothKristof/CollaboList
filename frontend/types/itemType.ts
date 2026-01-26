@@ -3,6 +3,7 @@ import { List } from "./listType"
 
 export interface Item{
     id: number,
+    ownerId: number,
     name: string,
     price: number,
     category: CategoryKey

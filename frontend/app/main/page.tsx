@@ -17,6 +17,7 @@ import { CustomCard } from '../global.styles';
 import ListListingDiv from '@/components/ListListingDiv';
 import { UserMenu } from '@/components/UserMenu';
 import PieChartComponent from '@/components/PieChart';
+import { Item } from '@/types/itemType';
 
 
 function page() {
@@ -28,6 +29,8 @@ function page() {
       router.replace("/login");
     }
   }, [isAuthenticated]);
+  
+  const userItems: Item[] = items.filter(item => item.ownerId === user?.id);
 
   return (
     <PageWrapper>
@@ -42,7 +45,7 @@ function page() {
             <Card />
           </CardRow> */}
           <ListListingDiv></ListListingDiv>
-          <RecentlyAddedItemDiv items={items}></RecentlyAddedItemDiv>
+          <RecentlyAddedItemDiv items={userItems}></RecentlyAddedItemDiv>
         </MainColumn>
 
         <RightColumn>

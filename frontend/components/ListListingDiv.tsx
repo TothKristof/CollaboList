@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { categories } from '@/data/categories';
 import { lists } from '@/data/lists';
 import Link from 'next/link';
+import { useAuth } from '@/context/authContext';
 
 const ListsDiv = styled.div({
     display: 'flex',
@@ -52,13 +53,15 @@ const ListLink = styled(Link)({
 function ListListingDiv() {
     const [isVisible, setIsVisible] = useState(false)
     const categoryList = Object.keys(categories);
+    const {user} = useAuth() 
+    const userLists = lists.filter((list) => list.ownerId == user?.id) 
     return (
         <>
             <ListsDiv>
                 <ListDiv onClick={() => setIsVisible(!isVisible)}>
                     <Plus size={48}></Plus>
                 </ListDiv>
-                {lists.map((list, index) => {
+                {userLists.map((list, index) => {
                     const Icon = categories[list.category].icon;
                     return (
                         <ListLink key={index} href={`/lists/${list.id}`}>
