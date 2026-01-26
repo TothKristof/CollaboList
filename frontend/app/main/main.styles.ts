@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { borderRadius } from "@kinsta/stratus";
+import { borderRadius, breakpoints } from "@kinsta/stratus";
 
 export const PageWrapper = styled.div({
   display: "flex",
@@ -18,10 +18,14 @@ export const Sidebar = styled.div({
 });
 
 export const ContentWrapper = styled.div({
-  flex: 1,
+  display: 'grid',
   minWidth: 0,
-  display: "flex",
   gap: 24,
+  [breakpoints.l.up]: {
+    display: "flex",
+    flex: 1,
+  }
+
 });
 
 export const MainColumn = styled.div({

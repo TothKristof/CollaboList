@@ -61,8 +61,8 @@ function ListListingDiv() {
                 {lists.map((list, index) => {
                     const Icon = categories[list.category].icon;
                     return (
-                        <ListLink href={`/lists/${list.id}`}>
-                            <ListDiv key={index}>
+                        <ListLink key={index} href={`/lists/${list.id}`}>
+                            <ListDiv>
                                 <Icon size={32} />
                                 <div>{list.name}</div>
                             </ListDiv>

@@ -7,7 +7,7 @@ import {
   FeatureCardDiv
 } from './home.styles';
 import Link from 'next/link'
-import { Heading, Button, Card } from '@kinsta/stratus';
+import { Heading, Button, Card, Display } from '@kinsta/stratus';
 import Image from 'next/image'
 import { features } from '@/data/features';
 import { RowWithSpaceBetween, CenterContentDiv } from './global.styles';
@@ -32,8 +32,8 @@ export default function Home() {
       </RowWithSpaceBetween>
       <HeroContainer>
         <MarketingTextsDiv>
-          <Heading>Organize your wishes. Buy smarter.</Heading>
-          <Heading size='xs'>Create wishlists, set priorities,<br /> and track prices — all in one simple place.</Heading>
+          <Display size='xl'>Organize your wishes. Buy smarter.</Display>
+          <Display size='xs' >Create wishlists, set priorities,<br /> and track prices — all in one simple place.</Display>
         </MarketingTextsDiv>
         <PictureDiv>
           <Image

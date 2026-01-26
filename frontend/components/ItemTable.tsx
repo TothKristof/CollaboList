@@ -6,8 +6,8 @@ interface TableProps {
     tableData: Item[];
 }
 
-function ItemTable({tableData}: TableProps) {
-        const columns: TableColumnDef<Item>[] = [
+function ItemTable({ tableData }: TableProps) {
+    const columns: TableColumnDef<Item>[] = [
         {
             id: "category",
             header: "",
@@ -63,6 +63,7 @@ function ItemTable({tableData}: TableProps) {
         <Table<Item>
             columns={columns}
             data={tableData}
+            rowKey="id"
         />
     )
 }

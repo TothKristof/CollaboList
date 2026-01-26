@@ -9,7 +9,6 @@ export const RowWithSpaceBetween = styled.div({
 
 export const CustomCard = styled.div({
   flex: 1,
-  height: 200,
   backgroundColor: "#ffffff",
   borderRadius: 16,
 });

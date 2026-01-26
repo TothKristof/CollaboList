@@ -18,7 +18,7 @@ export const HeroContainer = styled.div({
 
 export const MarketingTextsDiv = styled.div({
   display: 'grid',
-  gap: '16px',
+  gap: '30px',
   justifyContent: 'space-around',
   alignItems: 'center',
   marginTop: 'auto',
@@ -29,7 +29,7 @@ export const MarketingTextsDiv = styled.div({
   },
   [breakpoints.xl.up]: {
     fontSize: '95px',
-    gap: '0px'
+    gap: '30px'
   },
 });
 
