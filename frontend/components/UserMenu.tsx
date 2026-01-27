@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/context/authContext";
 import { AvatarSegment } from "@/app/main/main.styles";
-import { Stack, Avatar, Button} from "@kinsta/stratus";
+import { Stack, Avatar, Button, space} from "@kinsta/stratus";
 import styled from "@emotion/styled";
 import { LogOut } from "lucide-react";
 
@@ -16,7 +16,7 @@ const LogoutButton = styled(Button)({
     borderRadius: 6,
     minWidth: 160,
     zIndex: 1000,
-    gap: 20
+    gap: space[250]
 })
 
 export function UserMenu({ email }: { email?: string }) {

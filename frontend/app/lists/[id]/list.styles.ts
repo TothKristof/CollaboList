@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-
+import { space } from "@kinsta/stratus";
 
 
 export const ListDiv = styled.div({
@@ -7,8 +7,8 @@ export const ListDiv = styled.div({
   flexDirection: 'column',
   width: '1400px',
   backgroundColor: 'white',
-  padding: 20,
-  gap: 24,
+  padding: space[250],
+  gap: space[300],
   overflow: 'hidden',
 });
 

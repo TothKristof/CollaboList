@@ -1,10 +1,10 @@
 import styled from '@emotion/styled'
-import { borderRadius, breakpoints } from '@kinsta/stratus'
+import { borderRadius, breakpoints, space } from '@kinsta/stratus'
 
 export const HorizontalAlignment = styled.div({
     height: '70vh',
     margin: 'auto',
-    width: '100%',
+    width: '90%',
     display: 'flex',
     borderRadius: borderRadius.xl,
     color: 'black',
@@ -39,9 +39,9 @@ export const FormWrapper = styled.div({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: '24px',
+    padding: space[300],
     textAlign: 'center',
-    gap: '40px',
+    gap: space[500],
 
     [breakpoints.m.up]: {
         width: '50%',

@@ -1,23 +1,23 @@
 import styled from "@emotion/styled";
+import { space } from "@kinsta/stratus";
 
 export const RowWithSpaceBetween = styled.div({
   display: 'flex',
   justifyContent: 'space-between',
-  width: '100%',
   alignItems: 'center',
 });
 
 export const CustomCard = styled.div({
   flex: 1,
   backgroundColor: "#ffffff",
-  borderRadius: 16,
+  borderRadius: space[200],
 });
 
 
 export const CenterContentDiv = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
   justifyContent: 'center',
-  height: '100%'
+  height: '100%',
+  padding: 0
 });

@@ -1,12 +1,22 @@
 'use client'
 import { Inter } from "next/font/google";
-import { StratusProvider } from '@kinsta/stratus'
+import { StratusProvider, body, space } from '@kinsta/stratus'
 import { AuthProvider } from "@/context/authContext";
+import styled from "@emotion/styled";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
+
+const StyledBody = styled.body({
+  display: 'flex',
+  height: '100dvh',
+  margin: 0,
+  backgroundColor: 'rgb(230, 209, 199)',
+  padding: space[300],
+  justifyContent: 'center'
+})
 
 export default function RootLayout({
   children,
@@ -15,20 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <StratusProvider language="en">
-        <html>
-          <body
-            className={` ${inter.variable}`}
-            style={{
-              display: 'flex',
-              height: '100dvh',
-              margin: 0,
-              backgroundColor: 'rgb(230, 209, 199)',
-              padding: '24px',
-              justifyContent: 'center'
-            }}>
+      <html>
+          <StyledBody className={` ${inter.variable}`}>
             <AuthProvider>{children}</AuthProvider>
-          </body>
-        </html>
+          </StyledBody>
+      </html>
     </StratusProvider>
   );
 }

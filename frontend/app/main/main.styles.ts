@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { borderRadius, breakpoints } from "@kinsta/stratus";
+import { borderRadius, breakpoints, space } from "@kinsta/stratus";
 
 export const PageWrapper = styled.div({
   display: "flex",
@@ -7,7 +7,7 @@ export const PageWrapper = styled.div({
   width: "100%",
   maxWidth: "100%",
   backgroundColor: 'rgb(230, 209, 199)',
-  gap: 24,
+  gap: space[100],
   overflow: 'hidden',
 });
 
@@ -20,7 +20,7 @@ export const Sidebar = styled.div({
 export const ContentWrapper = styled.div({
   display: 'grid',
   minWidth: 0,
-  gap: 24,
+  gap: space[300],
   [breakpoints.l.up]: {
     display: "flex",
     flex: 1,
@@ -33,27 +33,27 @@ export const MainColumn = styled.div({
   minWidth: 0,
   display: "flex",
   flexDirection: "column",
-  gap: 24,
+  gap: space[300],
 });
 
 export const RightColumn = styled.div({
   flex: 1,
   display: "flex",
   flexDirection: "column",
-  gap: 24,
+  gap: space[300],
 });
 
 export const CardRow = styled.div({
   display: "flex",
-  gap: 24,
+  gap: space[300],
 });
 
 export const AvatarSegment = styled.div({
   display: 'flex',
   backgroundColor: 'white',
   borderRadius: borderRadius.l,
-  gap: 10,
-  padding: 10,
-  paddingInline: 30,
+  gap: space[150],
+  padding: space[100],
+  paddingInline: space[400],
   cursor: 'pointer'
 });
