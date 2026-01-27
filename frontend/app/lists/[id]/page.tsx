@@ -18,11 +18,10 @@ function page() {
     let params = useParams();
     const listId = Number(params.id);
     const list = lists.find((l: List) => l.id === listId)
-    const [items, setItems] = useState<Item[]>(list?.items)
-
     if (!list) {
         return <div>List not found</div>
     }
+    const [items, setItems] = useState<Item[]>(list.items)
 
     function editPrice({
         itemId,
