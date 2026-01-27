@@ -15,6 +15,7 @@ interface TableProps {
 
 function ItemTable({ tableData, actions }: TableProps) {
     const [editedItemId, setEditedItemId] = useState<number | null>(null);
+    const [editedPrice, setEditedPrice] = useState<number>(0);
     const columns: TableColumnDef<Item>[] = [
         {
             id: "category",
@@ -66,8 +67,8 @@ function ItemTable({ tableData, actions }: TableProps) {
             accessorKey: 'price',
             cell: ({ row }) => {
                 const item = row.original;
+                setEditedPrice(item.price);
                 if (editedItemId == item.id) {
-                    const [editedPrice, setEditedPrice] = useState<number>(item.price);
                     return (
                         <Stack direction='row'>
                             <input

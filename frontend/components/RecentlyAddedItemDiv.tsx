@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { RowWithSpaceBetween } from '@/app/global.styles'
-import { Heading} from '@kinsta/stratus';
+import { Heading, space} from '@kinsta/stratus';
 import { Item } from '@/types/itemType';
 import ItemTable from './ItemTable';
 
@@ -8,7 +8,7 @@ const RecentlyAddedItems = styled.div({
     height: '100%',
     backgroundColor: "#ffffff",
     borderRadius: 16,
-    padding: 20
+    padding: space[250]
 });
 
 type Props = {
@@ -25,7 +25,7 @@ function RecentlyAddedItemDiv({ items }: Props) {
             <RowWithSpaceBetween>
                 <Heading size='l'>Recently Added Items</Heading>
             </RowWithSpaceBetween>
-            <ItemTable tableData={items}></ItemTable>
+            <ItemTable tableData={sortedItems}></ItemTable>
         </RecentlyAddedItems>
     )
 }
