@@ -19,5 +19,8 @@ export const CenterContentDiv = styled.div({
   flexDirection: 'column',
   justifyContent: 'center',
   height: '100%',
-  padding: 0
+  padding: 0,
+  width: '100%',
+  maxWidth: '1400px',
+  margin: '0 auto',
 });

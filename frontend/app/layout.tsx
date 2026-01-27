@@ -15,7 +15,9 @@ const StyledBody = styled.body({
   margin: 0,
   backgroundColor: 'rgb(230, 209, 199)',
   padding: space[300],
-  justifyContent: 'center'
+  justifyContent: 'center',
+  boxSizing: 'border-box',
+  overflowY: 'auto',
 })
 
 export default function RootLayout({

@@ -8,7 +8,7 @@ export const PageWrapper = styled.div({
   maxWidth: "100%",
   backgroundColor: 'rgb(230, 209, 199)',
   gap: space[100],
-  overflow: 'hidden',
+  overflow: 'visible',
 });
 
 export const Sidebar = styled.div({
