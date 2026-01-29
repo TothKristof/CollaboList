@@ -4,12 +4,12 @@ import { Heading, space} from '@kinsta/stratus';
 import { Item } from '@/types/itemType';
 import ItemTable from './ItemTable';
 
-const RecentlyAddedItems = styled.div({
+const RecentlyAddedItems = styled.div((props) => ({
     height: '100%',
-    backgroundColor: "#ffffff",
+    background: props.theme.colors.accent,
     borderRadius: 16,
     padding: space[250]
-});
+}));
 
 type Props = {
     items: Item[];

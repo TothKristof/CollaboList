@@ -1,5 +1,4 @@
 "use client";
-import Brand from '../components/Brand';
 import {
   HeroContainer,
   MarketingTextsDiv,
@@ -23,31 +22,15 @@ import {
   AlertTitle,
   AlertText
 } from './home.styles';
-import Link from 'next/link'
 import { Button, Card, Display, color } from '@kinsta/stratus';
 import { features } from '@/data/features';
-import { RowWithSpaceBetween, CenterContentDiv } from './global.styles';
-import { useAuth } from '@/context/authContext';
+import {CenterContentDiv } from './global.styles';
 import { ShoppingBag, Bell } from 'lucide-react';
 
 
 export default function Home() {
-  const { isAuthenticated } = useAuth();
   return (
     <CenterContentDiv>
-      <RowWithSpaceBetween>
-        <Brand />
-        {isAuthenticated ? (
-          <Link href="/main">
-            <Button>Sign in</Button>
-          </Link>
-        ) : (
-          <Link href="/login">
-            <Button>Sign in</Button>
-          </Link>
-        )}
-
-      </RowWithSpaceBetween>
       <HeroContainer>
         <MarketingTextsDiv>
           <Display size='l'>Organize your wishes. Buy smarter.</Display>
