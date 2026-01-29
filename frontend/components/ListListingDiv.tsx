@@ -7,33 +7,34 @@ import { lists } from '@/data/lists';
 import Link from 'next/link';
 import { useAuth } from '@/context/authContext';
 
-const ListsDiv = styled.div({
+const ListsDiv = styled.div((props) => ({
     display: 'flex',
     height: 200,
     width: '100%',
     borderRadius: 16,
     padding: 10,
     flexShrink: 0,
-    backgroundColor: '#ffffff',
-    color: 'rgb(230, 209, 199)',
+    background: props.theme.colors.accent,
     gap: 10,
-    overflowX: 'scroll'
-});
+    overflowX: 'scroll',
+    msOverflowStyle: 'none',
+    scrollbarWidth: 'none',
+}));
 
-const ListDiv = styled.div({
+const ListDiv = styled.div((props) => ({
     display: 'flex',
     flexDirection: 'column',
     minWidth: 200,
     flexShrink: 0,
     borderRadius: 16,
     padding: 10,
-    backgroundColor: '#ffffff',
-    color: 'black',
+    background: props.theme.colors.background,
+    color: props.theme.colors.text,
     justifyContent: 'center',
     alignItems: 'center',
-    border: 'solid 4px',
+    border: `solid 4px ${props.theme.colors.text}`,
     cursor: 'pointer'
-});
+}));
 
 const FormDiv = styled.div({
     display: 'flex',

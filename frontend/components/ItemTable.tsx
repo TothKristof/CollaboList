@@ -1,8 +1,9 @@
 import { Item } from '@/types/itemType'
-import { Button, Input, Stack, Table, TableColumnDef, Tooltip } from '@kinsta/stratus'
+import { Button, Stack, Table, TableColumnDef, Tooltip } from '@kinsta/stratus'
 import { categories } from '@/data/categories'
-import { Check, Edit, Globe, Icon, Trash } from 'lucide-react';
+import { Check, Edit, Globe, Trash } from 'lucide-react';
 import { useState } from 'react';
+import { css, useTheme } from '@emotion/react';
 
 interface TableProps {
     tableData: Item[];
@@ -16,6 +17,8 @@ interface TableProps {
 function ItemTable({ tableData, actions }: TableProps) {
     const [editedItemId, setEditedItemId] = useState<number | null>(null);
     const [editedPrice, setEditedPrice] = useState<number>(0);
+    const theme = useTheme();
+
     const columns: TableColumnDef<Item>[] = [
         {
             id: "category",
@@ -36,7 +39,7 @@ function ItemTable({ tableData, actions }: TableProps) {
                                 justifyContent: "center",
                             }}
                         >
-                            <Icon size={24}  color={color}/>
+                            <Icon size={24} color={color} />
                         </div>
                     </Tooltip>
                 );
@@ -70,7 +73,7 @@ function ItemTable({ tableData, actions }: TableProps) {
                 setEditedPrice(item.price);
                 if (editedItemId == item.id) {
                     return (
-                        <Stack direction='row'>
+                        <Stack direction='row' style={{ background: theme.colors.background }}>
                             <input
                                 type="number"
                                 value={editedPrice}
@@ -104,7 +107,12 @@ function ItemTable({ tableData, actions }: TableProps) {
                 }
 
                 return (
-                    <div style={{ display: "flex", gap: 8 }}>
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: 8,
+                        }}
+                    >
 
                         {/* External link */}
                         <Tooltip content="Check price on web">
@@ -148,6 +156,22 @@ function ItemTable({ tableData, actions }: TableProps) {
             columns={columns}
             data={tableData}
             rowKey="id"
+            customStyles={{
+                tableRowStyles: css`
+                color: ${theme.colors.background}
+          background: ${theme.colors.primary}
+        `,
+                tableCellStyles: css`
+          color: "black";
+        `,
+                tableHeaderStyles: css`
+          background: ${theme.colors.primary};
+          color: ${theme.colors.text};
+        `,
+                actionHeaderStyle: {
+                    background: theme.colors.background,
+                },
+            }}
         />
     )
 }

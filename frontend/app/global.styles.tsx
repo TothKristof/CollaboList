@@ -5,13 +5,14 @@ export const RowWithSpaceBetween = styled.div({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+  marginBottom: 10
 });
 
-export const CustomCard = styled.div({
+export const CustomCard = styled.div((props) => ({
   flex: 1,
-  backgroundColor: "#ffffff",
+  backgroundColor: props.theme.colors.accent,
   borderRadius: space[200],
-});
+}));
 
 
 export const CenterContentDiv = styled.div({

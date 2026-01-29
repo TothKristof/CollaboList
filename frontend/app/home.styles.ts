@@ -54,15 +54,15 @@ export const GraphDiv = styled.div({
   },
 });
 
-export const CustomCard = styled.div({
-  background: '#ffffff',
+export const CustomCard = styled.div((props) =>({
+  background: props.theme.colors.accent,
   borderRadius: borderRadius.l,
   border: '1px solid #f1f5f9',
   padding: '1.5rem',
   boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
   position: 'relative',
   zIndex: 10,
-});
+}));
 
 export const Header = styled.div({
   display: 'flex',
