@@ -10,7 +10,7 @@ import { Heading, Password, Input, Button, Toaster } from '@kinsta/stratus'
 import { useState } from 'react'
 import { User } from '@/types/userType'
 import { users } from '@/data/users'
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/hooks/useRouter'
 import { useAuth } from "@/context/authContext";
 import { useEffect } from 'react'
 
@@ -73,7 +73,9 @@ function Login() {
             }
           />
           <Password
+            id="password"
             label='Password'
+            name='password'
             options={{
               hidePasswordText: 'Hide password',
               revealPasswordText: 'Reveal password'

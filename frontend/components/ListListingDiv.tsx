@@ -3,11 +3,11 @@ import styled from "@emotion/styled";
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { categories } from '@/data/categories';
-import { lists } from '@/data/lists';
 import Link from 'next/link';
 import { useAuth } from '@/context/authContext';
+import { List } from '@/types/listType';
 
-const ListsDiv = styled.div((props) => ({
+const ListsDiv = styled.div<{ scrollable: boolean }>((props) => ({
     display: 'flex',
     height: 200,
     width: '100%',
@@ -16,9 +16,15 @@ const ListsDiv = styled.div((props) => ({
     flexShrink: 0,
     background: props.theme.colors.accent,
     gap: 10,
-    overflowX: 'scroll',
+    overflowX: props.scrollable ? 'auto' : 'hidden',
     msOverflowStyle: 'none',
-    scrollbarWidth: 'none',
+    scrollbarWidth: props.scrollable ? 'auto' : 'none',
+}));
+
+const EmptyState = styled.div((props) => ({
+    margin: 'auto 0px',
+    fontSize: 18,
+    color: props.theme.colors.text,
 }));
 
 const ListDiv = styled.div((props) => ({
@@ -50,53 +56,75 @@ const ListLink = styled(Link)({
     textDecoration: 'none',
 });
 
+interface ListsDivProps {
+    lists: List[]
+}
 
-function ListListingDiv() {
+
+function ListListingDiv({ lists }: ListsDivProps) {
     const [isVisible, setIsVisible] = useState(false)
-    const categoryList = Object.keys(categories);
-    const {user} = useAuth() 
-    const userLists = lists.filter((list) => list.ownerId == user?.id) 
+    const categoryList = Object.keys(categories)
+
+    const hasLists = lists.length > 0
+    const isScrollable = lists.length > 5
+
     return (
         <>
-            <ListsDiv>
-                <ListDiv onClick={() => setIsVisible(!isVisible)}>
-                    <Plus size={48}></Plus>
+            <ListsDiv scrollable={isScrollable}>
+                <ListDiv onClick={() => setIsVisible(true)}>
+                    <Plus size={48} />
                 </ListDiv>
-                {userLists.map((list, index) => {
-                    const Icon = categories[list.category].icon;
-                    const color = categories[list.category].color;
-                    return (
-                        <ListLink key={list.id} href={`/lists/${list.id}`}>
-                            <ListDiv>
-                                <Icon size={32} color={color}/>
-                                <div>{list.name}</div>
-                            </ListDiv>
-                        </ListLink>
-                    );
-                })}
+                {!hasLists && (
+                    <EmptyState>
+                        You don’t have any lists yet.
+                    </EmptyState>
+                )}
+
+                {hasLists && (
+                    <>
+
+                        {lists.map((list) => {
+                            const category = categories[list.category]
+                            if (!category) return null
+
+                            const Icon = category.icon
+                            const color = category.color
+
+                            return (
+                                <ListLink key={list.id} href={`/lists/${list.id}`}>
+                                    <ListDiv>
+                                        <Icon size={32} color={color} />
+                                        <div>{list.name}</div>
+                                    </ListDiv>
+                                </ListLink>
+                            )
+                        })}
+                    </>
+                )}
             </ListsDiv>
+
             <Modal
                 isVisible={isVisible}
-                title="Add new list" isClosable={true}
-                onOk={() => setIsVisible(!isVisible)}
-                okText={'Add new list'}
-                onCancel={() => setIsVisible(!isVisible)}
+                title="Add new list"
+                isClosable
+                onOk={() => setIsVisible(false)}
+                okText="Add new list"
+                onCancel={() => setIsVisible(false)}
             >
                 <FormDiv>
                     <Input
-                        label={'List name'}
+                        label="List name"
                         placeholder="Type something"
                     />
                     <AutoComplete
-                        label={'List items category (optional)'}
+                        label="List items category (optional)"
                         searchIndex={categoryList}
-                    >
-
-                    </AutoComplete>
+                    />
                 </FormDiv>
             </Modal>
         </>
     )
 }
+
 
 export default ListListingDiv

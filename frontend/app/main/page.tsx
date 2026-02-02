@@ -15,7 +15,7 @@ import { CustomCard } from '../global.styles';
 import ListListingDiv from '@/components/ListListingDiv';
 import PieChartComponent from '@/components/PieChart';
 import { Item } from '@/types/itemType';
-import Navbar from '@/components/Navbar';
+import { lists } from '@/data/lists';
 
 
 function page() {
@@ -27,8 +27,9 @@ function page() {
       router.replace("/login");
     }
   }, [isAuthenticated]);
-  
+
   const userItems: Item[] = items.filter(item => item.ownerId === user?.id);
+  const userLists = lists.filter((list) => list.ownerId == user?.id)
 
   return (
     <PageWrapper>
@@ -37,7 +38,7 @@ function page() {
           {/* <CardRow>
             <Card />
           </CardRow> */}
-          <ListListingDiv></ListListingDiv>
+          <ListListingDiv lists = {lists}></ListListingDiv>
           <RecentlyAddedItemDiv items={userItems}></RecentlyAddedItemDiv>
         </MainColumn>
 

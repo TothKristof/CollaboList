@@ -19,7 +19,7 @@ const LogoutButton = styled(Button)({
     gap: space[250]
 })
 
-export function UserMenu({ email }: { email?: string }) {
+export function UserMenu({ email }: { email: string }) {
     const { logout } = useAuth();
     const [open, setOpen] = useState(false);
 
