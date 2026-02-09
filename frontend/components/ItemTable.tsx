@@ -176,4 +176,4 @@ function ItemTable({ tableData, actions }: TableProps) {
     )
 }
 
-export default ItemTable
+export default ItemTable;

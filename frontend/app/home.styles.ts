@@ -18,7 +18,7 @@ export const HeroContainer = styled.div({
   },
 });
 
-export const MarketingTextsDiv = styled.div({
+export const MarketingTextsDiv = styled.div((props) => ({
   display: 'grid',
   gap: space[400],
   justifyContent: 'space-around',
@@ -26,6 +26,7 @@ export const MarketingTextsDiv = styled.div({
   marginTop: 'auto',
   marginBottom: 'auto',
   fontSize: '50px',
+  color: props.theme.colors.text,
   [breakpoints.m.up]: {
     textAlign: 'left',
   },
@@ -33,7 +34,7 @@ export const MarketingTextsDiv = styled.div({
     fontSize: '95px',
     gap: space[400]
   },
-});
+}));
 
 export const FeatureCardDiv = styled.div({
   display: 'grid',

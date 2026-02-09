@@ -14,7 +14,7 @@ type EditPriceArgs = {
     newPrice: Item["price"];
 };
 
-function page() {
+function ListPage() {
     let params = useParams();
     const listId = Number(params.id);
     const list = lists.find((l: List) => l.id === listId)
@@ -65,4 +65,4 @@ function page() {
     )
 }
 
-export default page
+export default ListPage
