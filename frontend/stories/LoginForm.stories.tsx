@@ -12,7 +12,6 @@ type Story = StoryObj<typeof Login>
 
 export const EmptyForm: Story = {}
 
-// Pre-filled email only
 export const PrefilledEmail: Story = {
   args: {},
   play: async ({ canvasElement }) => {
@@ -23,7 +22,6 @@ export const PrefilledEmail: Story = {
   },
 }
 
-// Wrong credentials
 export const WrongCredentials: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -38,7 +36,6 @@ export const WrongCredentials: Story = {
   },
 }
 
-// Success login (user exists)
 export const SuccessLogin: Story = {
   args: {},
   play: async ({ canvasElement }) => {
