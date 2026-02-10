@@ -1,4 +1,4 @@
-import { Category, CategoryKey } from "./categoryType";
+import {CategoryKey } from "./categoryType";
 import { Item } from "./itemType";
 
 export interface List{

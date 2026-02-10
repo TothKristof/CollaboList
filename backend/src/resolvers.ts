@@ -1,4 +1,5 @@
-import { prisma } from "../prismaClient.js";
+import { prisma } from "./prismaClient.js";
+import { Category } from "./generated/prisma/index.js";
 
 export const resolvers = {
   Query: {

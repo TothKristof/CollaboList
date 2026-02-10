@@ -5,7 +5,9 @@
     "lib": ["es2023"],
     "target": "es2023",
     "module": "esnext",
-    "moduleResolution": "bundler",
+
+    "moduleResolution": "node",
+
     "esModuleInterop": true,
     "types": ["node"]
   }
