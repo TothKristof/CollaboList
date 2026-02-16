@@ -6,6 +6,8 @@ import styled from "@emotion/styled";
 import { ThemeProvider } from "@/context/themeContext";
 import { useTheme } from "@emotion/react";
 import Navbar from "@/components/Navbar";
+import { ApolloClient, HttpLink, InMemoryCache, gql } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,6 +26,11 @@ const StyledBody = styled.body((props) => ({
   overflowY: 'auto',
 }))
 
+const client = new ApolloClient({
+  link: new HttpLink({ uri: "http://localhost:4000/" }),
+  cache: new InMemoryCache(),
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,17 +38,19 @@ export default function RootLayout({
 }>) {
 
   return (
-    <ThemeProvider>
-      <StratusProvider language="en">
-        <html>
-          <StyledBody className={` ${inter.variable}`}>
-            <AuthProvider>
-              <Navbar></Navbar>
-              {children}
+    <ApolloProvider client={client}>
+      <ThemeProvider>
+        <StratusProvider language="en">
+          <html>
+            <StyledBody className={` ${inter.variable}`}>
+              <AuthProvider>
+                <Navbar></Navbar>
+                {children}
               </AuthProvider>
-          </StyledBody>
-        </html>
-      </StratusProvider>
-    </ThemeProvider>
+            </StyledBody>
+          </html>
+        </StratusProvider>
+      </ThemeProvider>
+    </ApolloProvider>
   );
 }

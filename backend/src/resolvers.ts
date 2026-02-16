@@ -1,4 +1,5 @@
-import { prisma } from "../prismaClient.js";
+import 'dotenv/config'
+import {prisma} from "./prismaClient"
 
 export const resolvers = {
   Query: {

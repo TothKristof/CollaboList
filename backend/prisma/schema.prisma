@@ -5,8 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider     = "prisma-client-js"
+  output       = "../src/generated/prisma"
   moduleFormat = "esm"
 }
 
@@ -15,8 +15,49 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+
+  items Item[]
+  lists List[]
+}
+
+model Item {
+  id       Int      @id @default(autoincrement())
+  name     String
+  price    Int
+  category Category
+  link     String
+
+  addDate         DateTime
+  lastUpdatedDate DateTime
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id])
+
+  listId Int?
+  list   List? @relation(fields: [listId], references: [id])
+}
+
+model List {
+  id       Int      @id @default(autoincrement())
+  name     String
+  category Category
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id])
+
+  items Item[]
+}
+
+enum Category {
+  Gaming
+  Technology
+  Personal
+  HomeLiving
+  Learning
+  Style
+  Wellness
+  Hobbies
 }
