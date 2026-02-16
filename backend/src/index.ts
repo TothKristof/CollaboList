@@ -2,7 +2,7 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import fs from "fs";
 import path from "path";
-import { resolvers } from "./resolvers.js";
+import { resolvers } from "./resolvers";
 
 const typeDefs = fs.readFileSync(
   path.join(process.cwd(), "src/schema.graphql"),

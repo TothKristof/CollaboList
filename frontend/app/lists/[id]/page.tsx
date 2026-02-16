@@ -36,6 +36,7 @@ function ListPage() {
         );
     }
 
+    // TEST THIS
     function deleteItem(itemId: number) {
         setItems(items =>
             items.filter(item => item.id !== itemId)

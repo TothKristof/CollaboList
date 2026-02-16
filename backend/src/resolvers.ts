@@ -1,5 +1,5 @@
-import { prisma } from "./prismaClient.js";
-import { Category } from "./generated/prisma/index.js";
+import 'dotenv/config'
+import {prisma} from "./prismaClient"
 
 export const resolvers = {
   Query: {
