@@ -2,7 +2,7 @@ import { Item } from '@/types/itemType'
 import { Button, Stack, Table, TableColumnDef, Tooltip } from '@kinsta/stratus'
 import { categories } from '@/data/categories'
 import { Check, Edit, Globe, Trash } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { css, useTheme } from '@emotion/react';
 
 interface TableProps {
@@ -70,10 +70,9 @@ function ItemTable({ tableData, actions }: TableProps) {
             accessorKey: 'price',
             cell: ({ row }) => {
                 const item = row.original;
-                setEditedPrice(item.price);
                 if (editedItemId == item.id) {
                     return (
-                        <Stack direction='row' style={{ background: theme.colors.background }}>
+                        <Stack direction='row' >
                             <input
                                 type="number"
                                 value={editedPrice}
@@ -129,7 +128,10 @@ function ItemTable({ tableData, actions }: TableProps) {
                         <Tooltip content="Edit price">
                             <Button
                                 type='secondary'
-                                onClick={() => setEditedItemId(item.id)}
+                                onClick={() => {
+                                    setEditedItemId(item.id)
+                                    setEditedPrice(item.price)
+                                }}
                             >
                                 <Edit size={18}></Edit>
                             </Button>

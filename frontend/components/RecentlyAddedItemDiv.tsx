@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { RowWithSpaceBetween } from '@/app/global.styles'
-import { Heading, space} from '@kinsta/stratus';
+import { Heading, space } from '@kinsta/stratus';
 import { Item } from '@/types/itemType';
 import ItemTable from './ItemTable';
 
@@ -25,7 +25,15 @@ function RecentlyAddedItemDiv({ items }: Props) {
             <RowWithSpaceBetween>
                 <Heading size='l'>Recently Added Items</Heading>
             </RowWithSpaceBetween>
-            <ItemTable tableData={sortedItems}></ItemTable>
+            <div
+                style={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                }}
+            >
+                <ItemTable tableData={sortedItems}></ItemTable>
+            </div>
         </RecentlyAddedItems>
     )
 }

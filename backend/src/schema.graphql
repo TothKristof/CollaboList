@@ -1,12 +1,59 @@
 type User {
+  id: Int!
   email: String
-  name: String
+}
+
+type List {
+  id: Int!
+  name: String!
+  category: Category!
+  items: [Item!]!
+}
+
+type Item {
+  id: Int!
+  name: String!
+  price: Int!
+  category: Category!
+  link: String!
+  addDate: String!
+  lastUpdatedDate: String!
+  list: List
+}
+
+enum Category {
+  Gaming
+  Technology
+  Personal
+  HomeLiving
+  Learning
+  Style
+  Wellness
+  Hobbies
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+type UserDatas{
+  items: [Item]
+  lists: [List]
 }
 
 type Query {
   users: [User]
+  me: User
+  userData: UserDatas
+  getListItems(id: Int!): [Item]
 }
 
 type Mutation{
-    register(email: String!, password: String!): User
+    register(email: String!, password: String!) : User
+    login(email: String!, password: String!) : AuthPayload
+    logout: Boolean
+    addList(name: String!, category: Category!) : List!
+    updatePrice(itemId: Int!, newPrice: Int!): Item!
+    deleteItem(itemId: Int!): Item!
 }

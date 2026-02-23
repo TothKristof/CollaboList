@@ -7,47 +7,42 @@ import {
 } from './login.styles'
 import Image from 'next/image'
 import { Heading, Password, Input, Button, Toaster } from '@kinsta/stratus'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { User } from '@/types/userType'
-import { users } from '@/data/users'
 import { useRouter } from '@/hooks/useRouter'
 import { useAuth } from "@/context/authContext";
-import { useEffect } from 'react'
+import { gql } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 
+const LOGIN = gql`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+      user {
+        id
+        email
+      }
+    }
+  }
+`;
 
 type LoginForm = Pick<User, 'email' | 'password'>;
 
 function Login() {
   const router = useRouter();
   const { login } = useAuth();
-
-
   const [form, setForm] = useState<LoginForm>({
     email: '',
     password: '',
   });
+  const [onLogin, { data, loading, error }] = useMutation(LOGIN);
 
-  const [error, setError] = useState<string | null>(null);
-
-  function onLogin() {
-    const user = users.find(
-      (u) =>
-        u.email === form.email &&
-        u.password === form.password
-    );
-
-    if (!user) {
-      setError('Wrong email or password');
-      return;
+  useEffect(() => {
+    if (data?.login?.token) {
+      login(data.login.token);
+      router?.push("/main");
     }
-
-    login({
-      id: user.id,
-      email: user.email,
-    });
-
-    router.push('/main');
-  }
+  }, [data]);
 
   return (
     <HorizontalAlignment>
@@ -61,7 +56,12 @@ function Login() {
 
       <FormWrapper>
         <Heading size='xl'>Login</Heading>
-        <div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onLogin({ variables: { email: form.email, password: form.password } });
+          }}
+        >
           <Input
             id="email"
             label="Email"
@@ -86,17 +86,17 @@ function Login() {
               setForm({ ...form, password: e.target.value })
             }
           />
-        </div>
+
+          <Button htmlType='submit'>Sign in</Button>
+        </form>
         <Toaster
           closeButtonAriaLabel='2'
           title='Login Error'
           type='error'
-          isOpen={error !== null}
-          onCancel={() => setError(null)}
-          text={error}
+          isOpen={error !== undefined}
+          text={error?.message}
         >
         </Toaster>
-        <Button onClick={onLogin}>Sign in</Button>
       </FormWrapper>
     </HorizontalAlignment>
   )

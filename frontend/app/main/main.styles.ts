@@ -14,6 +14,7 @@ export const PageWrapper = styled.div((props) => ({
 export const ContentWrapper = styled.div({
   display: 'grid',
   minWidth: 0,
+  minHeight: '80dvh',
   gap: space[300],
   [breakpoints.l.up]: {
     display: "flex",

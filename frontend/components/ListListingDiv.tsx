@@ -4,8 +4,9 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { categories } from '@/data/categories';
 import Link from 'next/link';
-import { useAuth } from '@/context/authContext';
 import { List } from '@/types/listType';
+import { gql } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client/react";
 
 const ListsDiv = styled.div<{ scrollable: boolean }>((props) => ({
     display: 'flex',
@@ -60,10 +61,28 @@ interface ListsDivProps {
     lists: List[]
 }
 
+const ADD_LIST = gql`
+  mutation AddList($name: String!, $category: Category!) {
+    addList(name: $name, category: $category) {
+      id
+      name
+      category
+      items {
+        id
+      }
+    }
+  }
+`;
+
 
 function ListListingDiv({ lists }: ListsDivProps) {
     const [isVisible, setIsVisible] = useState(false)
     const categoryList = Object.keys(categories)
+    const [newListName, setNewListName] = useState("")
+    const [newListCategory, setNewListCategory] = useState("")
+    const [addList] = useMutation(ADD_LIST, {
+        refetchQueries: ["GetUserData"],
+    });
 
     const hasLists = lists.length > 0
     const isScrollable = lists.length > 5
@@ -107,7 +126,15 @@ function ListListingDiv({ lists }: ListsDivProps) {
                 isVisible={isVisible}
                 title="Add new list"
                 isClosable
-                onOk={() => setIsVisible(false)}
+                onOk={async () => {
+                    setIsVisible(false)
+                    await addList({
+                        variables: {
+                            name: newListName,
+                            category: newListCategory,
+                        },
+                    });
+                }}
                 okText="Add new list"
                 onCancel={() => setIsVisible(false)}
             >
@@ -115,10 +142,14 @@ function ListListingDiv({ lists }: ListsDivProps) {
                     <Input
                         label="List name"
                         placeholder="Type something"
+                        onChange={(e) => setNewListName(e.target.value)}
                     />
                     <AutoComplete
                         label="List items category (optional)"
                         searchIndex={categoryList}
+                        onChange={(e) => {
+                            setNewListCategory(e)
+                        }}
                     />
                 </FormDiv>
             </Modal>

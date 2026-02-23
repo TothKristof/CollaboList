@@ -1,20 +1,30 @@
 import 'dotenv/config'
 import { Category } from "../src/generated/prisma/index.js";
-import {prisma} from "../src/prismaClient.js"
+import { prisma } from "../src/prismaClient.js"
+import bcrypt from "bcrypt";
 
 async function main() {
   await prisma.list.deleteMany();
   await prisma.item.deleteMany();
   await prisma.user.deleteMany();
 
+  const hashedAdmin = await bcrypt.hash("admin", 10);
+  const hashedAdmin2 = await bcrypt.hash("admin2", 10);
+
   const user1 = await prisma.user.create({
-    data: { email: "admin@gmail.com", password: "admin" },
+    data: {
+      email: "admin@gmail.com",
+      password: hashedAdmin
+    },
   });
 
   const user2 = await prisma.user.create({
-    data: { email: "admin2@gmail.com", password: "admin2" },
+    data: {
+      email: "admin2@gmail.com",
+      password: hashedAdmin2
+    },
   });
-
+  
   const mouse = await prisma.item.create({
     data: {
       ownerId: user1.id,
