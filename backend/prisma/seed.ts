@@ -33,19 +33,19 @@ async function main() {
       category: Category.Gaming,
       addDate: new Date("2025-01-10"),
       lastUpdatedDate: new Date("2025-01-10"),
-      link: "https://www.arukereso.hu/CategorySearch.php?st=Logitech+G305",
+      link: "https://eger.arukereso.hu/logitech/g305-lightspeed-black-910-005282-p412572665/",
     },
   });
 
   const keyboard = await prisma.item.create({
     data: {
       ownerId: user1.id,
-      name: "Keychron K Pro Mechanical Keyboard",
+      name: "Keychron B6 Pro",
       price: 34990,
       category: Category.Gaming,
       addDate: new Date("2025-01-11"),
       lastUpdatedDate: new Date("2025-01-11"),
-      link: "https://www.arukereso.hu/CategorySearch.php?st=Keychron+K+Pro",
+      link: "https://www.arukereso.hu/billentyuzet-c3111/keychron/b6-pro-hu-b6p-k1-hg-p1177012114/",
     },
   });
 
@@ -57,19 +57,19 @@ async function main() {
       category: Category.Technology,
       addDate: new Date("2025-01-12"),
       lastUpdatedDate: new Date("2025-01-12"),
-      link: "https://www.arukereso.hu/CategorySearch.php?st=Sony+WH-1000XM5",
+      link: "https://www.arukereso.hu/fulhallgato-fejhallgato-c3109/sony/wh-1000xm5-p917190654/",
     },
   });
 
   const ssd = await prisma.item.create({
     data: {
       ownerId: user2.id,
-      name: "Samsung 970 EVO Plus 1TB NVMe SSD",
+      name: "Samsung 970 EVO Plus 2TB NVMe SSD",
       price: 32990,
       category: Category.Technology,
       addDate: new Date("2025-01-13"),
       lastUpdatedDate: new Date("2025-01-13"),
-      link: "https://www.arukereso.hu/CategorySearch.php?st=Samsung+970+EVO+Plus+1TB",
+      link: "https://belso-ssd-meghajto.arukereso.hu/samsung/990-evo-2tb-m-2-mz-v9e2t0bw-p1043179693/",
     },
   });
 
@@ -81,7 +81,7 @@ async function main() {
       category: Category.Gaming,
       addDate: new Date("2025-01-14"),
       lastUpdatedDate: new Date("2025-01-14"),
-      link: "https://www.arukereso.hu/CategorySearch.php?st=Xbox+Wireless+Controller+Series+X",
+      link: "https://gamepad-kontroller.arukereso.hu/microsoft/xbox-series-x-s-wireless-controller-robot-white-qas-00009-p590841822/",
     },
   });
 
