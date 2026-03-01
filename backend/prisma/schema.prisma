@@ -29,6 +29,7 @@ model Item {
   price    Int
   category Category
   link     String
+  imgLink  String?
 
   addDate         DateTime
   lastUpdatedDate DateTime

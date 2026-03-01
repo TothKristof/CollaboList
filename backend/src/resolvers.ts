@@ -3,6 +3,8 @@ import { prisma } from "./prismaClient"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Category } from "@prisma/client";
+import { requireAuth } from './utils/auth';
+import { getItemOrThrow, fetchPriceFromUrl } from './services/item.service';
 
 export const resolvers = {
   Query: {
@@ -11,9 +13,7 @@ export const resolvers = {
     },
 
     me: async (_, __, context) => {
-      if (!context.userId) {
-        throw new Error("Not authenticated");
-      }
+      requireAuth(context);
 
       return prisma.user.findUnique({
         where: { id: context.userId }
@@ -21,9 +21,7 @@ export const resolvers = {
     },
 
     userData: async (_, __, context) => {
-      if (!context.userId) {
-        throw new Error("Not authenticated");
-      }
+      requireAuth(context);
 
       return prisma.user.findUnique({
         where: { id: context.userId },
@@ -43,10 +41,10 @@ export const resolvers = {
         throw new Error("Not authenticated");
       }
 
-      return prisma.item.findMany({
-        where: { listId: args.id },
+      return prisma.list.findUnique({
+        where: { id: args.id },
         include: {
-          list: true,
+          items: true,
         },
       });
     },
@@ -98,9 +96,7 @@ export const resolvers = {
     },
 
     addList: async (_: any, args: { name: string; category: string }, context: any) => {
-      if (!context.userId) {
-        throw new Error("Not authenticated");
-      }
+      requireAuth(context);
 
       const newList = await prisma.list.create({
         data: {
@@ -117,14 +113,12 @@ export const resolvers = {
     },
 
     updatePrice: async (_, args, context) => {
-      if (!context.userId) {
-        throw new Error("Not authenticated");
-      }
+      requireAuth(context);
 
       const updatedItem = await prisma.item.update({
         where: { id: args.itemId },
-        data: { 
-          price: args.newPrice ,
+        data: {
+          price: args.newPrice,
           lastUpdatedDate: new Date()
         },
       });
@@ -143,5 +137,50 @@ export const resolvers = {
 
       return deletedUser;
     },
+
+    updatePriceFromUrl: async (_, { itemId }, context) => {
+      const item = await getItemOrThrow(itemId)
+      const numericPrice = await fetchPriceFromUrl(item.link)
+
+      const updatedItem = await prisma.item.update({
+        where: { id: itemId },
+        data: {
+          price: numericPrice,
+          lastUpdatedDate: new Date(),
+        },
+      });
+
+      return updatedItem;
+    },
+
+    updateAllPricesFromUrl: async (_, { listId }) => {
+      const items = await prisma.item.findMany({
+        where: { listId },
+      });
+
+      const updatedItems = [];
+
+      for (const item of items) {
+        try {
+          const numericPrice = await fetchPriceFromUrl(item.link)
+
+          if (!numericPrice) continue;
+
+          const updatedItem = await prisma.item.update({
+            where: { id: item.id },
+            data: {
+              price: numericPrice,
+              lastUpdatedDate: new Date(),
+            },
+          });
+
+          updatedItems.push(updatedItem);
+        } catch (err) {
+          console.log(`Failed to update item ${item.name}`);
+        }
+      }
+
+      return updatedItems;
+    }
   },
 };

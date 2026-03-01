@@ -11,10 +11,11 @@ interface TableProps {
         onEditPrice: (item: Item) => void;
         onDelete: (item: Item) => void;
     };
+    priceDiffMap?: Record<number, string>
 }
 
 
-function ItemTable({ tableData, actions }: TableProps) {
+function ItemTable({ tableData, actions, priceDiffMap }: TableProps) {
     const [editedItemId, setEditedItemId] = useState<number | null>(null);
     const [editedPrice, setEditedPrice] = useState<number>(0);
     const theme = useTheme();
@@ -70,6 +71,7 @@ function ItemTable({ tableData, actions }: TableProps) {
             accessorKey: 'price',
             cell: ({ row }) => {
                 const item = row.original;
+                const diff = priceDiffMap?.[item.id];
                 if (editedItemId == item.id) {
                     return (
                         <Stack direction='row' >
@@ -92,7 +94,9 @@ function ItemTable({ tableData, actions }: TableProps) {
                         </Stack>
                     )
                 }
-                return `${row.original.price} HUF`
+                return diff
+                    ? `${item.price} HUF (${diff})`
+                    : `${item.price} HUF`;
             },
         },
         {

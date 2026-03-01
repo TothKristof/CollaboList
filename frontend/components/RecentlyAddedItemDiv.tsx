@@ -16,6 +16,7 @@ type Props = {
 };
 
 function RecentlyAddedItemDiv({ items }: Props) {
+    console.log(items)
     const sortedItems = items
         .slice()
         .sort((a, b) => b.addDate.getTime() - a.addDate.getTime())

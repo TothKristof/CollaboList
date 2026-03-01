@@ -46,7 +46,7 @@ type Query {
   users: [User]
   me: User
   userData: UserDatas
-  getListItems(id: Int!): [Item]
+  getListItems(id: Int!): List
 }
 
 type Mutation{
@@ -56,4 +56,6 @@ type Mutation{
     addList(name: String!, category: Category!) : List!
     updatePrice(itemId: Int!, newPrice: Int!): Item!
     deleteItem(itemId: Int!): Item!
+    updatePriceFromUrl(itemId: Int!): Item!
+    updateAllPricesFromUrl(listId: Int!): [Item!]!
 }

@@ -34,7 +34,7 @@ const { url } = await startStandaloneServer(server, {
     } catch {
       return { res };
     }
-  },
+  }
 });
 
 console.log(`🚀 Server ready at ${url}`);

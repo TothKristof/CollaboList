@@ -16,6 +16,7 @@ import PieChartComponent from '@/components/PieChart';
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 import { Item } from '@/types/itemType';
+import useHomeInformations from '../features/home/useHomeInformations';
 
 const USER_DATAS = gql`
   query GetUserData{
@@ -43,46 +44,24 @@ const USER_DATAS = gql`
 
 
 function page() {
-  const router = useRouter();
-  const { isAuthenticated, user } = useAuth();
-  const { loading, error, data } = useQuery(USER_DATAS, {
-    skip: !user
-  });
-
-  const lists = data?.userData?.lists ?? [];
-  const items = data?.userData?.items ?? [];
-
-  useEffect(() => {
-    if (!user) {
-      router.replace("/login");
-    }
-  }, [isAuthenticated]);
-
-  const transformedItems = useMemo(() => {
-    if (!data?.userData?.items) return [];
-
-    return data.userData.items.map((item: Item) => ({
-      ...item,
-      addDate: new Date(Number(item.addDate)),
-      lastUpdatedDate: new Date(Number(item.lastUpdatedDate)),
-    }));
-  }, [data]);
+    const { loading, error, items, lists } =
+      useHomeInformations();
 
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
 
   return (
     <PageWrapper>
-      {(lists && transformedItems) && (
+      {(lists && items) && (
         <ContentWrapper>
           <MainColumn>
-            <ListListingDiv lists={data?.userData?.lists ?? []} />
-            <RecentlyAddedItemDiv items={transformedItems} />
+            <ListListingDiv lists={lists} />
+            <RecentlyAddedItemDiv items={items} />
           </MainColumn>
 
           <RightColumn>
             <CustomCard >
-              <PieChartComponent lists={data?.userData?.lists}></PieChartComponent>
+              <PieChartComponent lists={lists}></PieChartComponent>
             </CustomCard>
             <CustomCard />
             <CustomCard />
