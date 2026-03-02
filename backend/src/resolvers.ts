@@ -42,9 +42,18 @@ export const resolvers = {
       }
 
       return prisma.list.findUnique({
-        where: { id: args.id },
+        where: {
+          id: args.id
+        },
         include: {
-          items: true,
+          items: {
+            where: {
+              name: {
+                contains: args.searchText,
+                mode: "insensitive",
+              },
+            },
+          },
         },
       });
     },

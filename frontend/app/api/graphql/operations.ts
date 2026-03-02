@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_LIST_ITEMS = gql`
-query getListItems($getListItemsId: Int!) {
-  getListItems(id: $getListItemsId) {
+query getListItems($getListItemsId: Int!, $searchText: String) {
+  getListItems(id: $getListItemsId, searchText: $searchText) {
     id
     name
     items {

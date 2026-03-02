@@ -2,9 +2,8 @@
 import { useParams } from 'next/navigation'
 import { ListDiv } from './list.styles';
 import { CenterContentDiv, RowWithSpaceBetween } from '@/app/global.styles';
-import { Heading, Button, Stack } from '@kinsta/stratus';
+import { Heading, Button, Stack, Input } from '@kinsta/stratus';
 import ItemTable from '@/components/ItemTable';
-import { useMemo } from 'react';
 import { Item } from '@/types/itemType';
 import { useListItems } from '@/app/features/lists/useListItems';
 
@@ -18,10 +17,20 @@ function ListPage() {
     const params = useParams();
     const listId = Number(params.id);
 
-    const { loading, error, items, listName, updatePrice, deleteItem, handleUpdateAllPrices, priceDiffMap } =
+    const {
+        error,
+        items,
+        listName,
+        updatePrice,
+        deleteItem,
+        handleUpdateAllPrices,
+        priceDiffMap,
+        refetchItems,
+        setSearchText,
+        searchText
+    } =
         useListItems(listId);
 
-    if (loading) return "Loading...";
     if (error) return `Error! ${error.message}`;
 
     function editPrice({
@@ -36,6 +45,22 @@ function ListPage() {
             <ListDiv>
                 <RowWithSpaceBetween>
                     <Heading size='l'>{listName}</Heading>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            gap: 16,
+                            width: 300
+                        }}
+                    >
+                        <Input
+                            placeholder="Search item"
+                            value={searchText}
+                            onChange={(e) => {
+                                setSearchText(e.target.value)
+                            }}
+                        />
+                    </div>
                     <Stack direction='row'>
                         <Button
                             onClick={() => handleUpdateAllPrices()}>

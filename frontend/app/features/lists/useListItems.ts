@@ -1,15 +1,30 @@
 import { useQuery, useMutation } from '@apollo/client/react';
 import { GET_LIST_ITEMS, UPDATE_PRICE, DELETE_ITEM, UPDATE_ALL_FROM_URL } from "@/app/api/graphql/operations";
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import type { Item } from '@/types/itemType';
 
 export function useListItems(listId: number) {
     const [priceDiffMap, setPriceDiffMap] = useState<Record<number, string>>({});
+    const [searchText, setSearchText] = useState("")
 
-    const { loading, error, data } = useQuery(GET_LIST_ITEMS, {
-        skip: !listId,
-        variables: { getListItemsId: listId },
-    });
+    const { loading, error, data, refetch, networkStatus } = useQuery(
+        GET_LIST_ITEMS,
+        {
+            skip: !listId,
+            variables: {
+                getListItemsId: listId,
+                searchText: searchText,
+            },
+            notifyOnNetworkStatusChange: true,
+        }
+    );
+
+    useEffect(() => {
+        refetch({
+            getListItemsId: listId,
+            searchText,
+        })
+    }, [searchText])
 
     const [updatePrice] = useMutation(UPDATE_PRICE);
 
@@ -84,6 +99,9 @@ export function useListItems(listId: number) {
         updatePrice,
         deleteItem,
         handleUpdateAllPrices,
-        priceDiffMap
+        priceDiffMap,
+        refetchItems: refetch,
+        setSearchText,
+        searchText,
     };
 }
