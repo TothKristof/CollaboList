@@ -36,27 +36,51 @@ export const resolvers = {
       });
     },
 
-    getListItems: async (_, args, context) => {
-      if (!context.userId) {
-        throw new Error("Not authenticated");
-      }
+getListItems: async (_, args, context) => {
+  if (!context.userId) {
+    throw new Error("Not authenticated");
+  }
 
-      return prisma.list.findUnique({
-        where: {
-          id: args.id
-        },
-        include: {
-          items: {
-            where: {
-              name: {
-                contains: args.searchText,
-                mode: "insensitive",
-              },
-            },
-          },
-        },
-      });
+  const list = await prisma.list.findUnique({
+    where: {
+      id: args.id,
     },
+  });
+
+  if (!list) {
+    throw new Error("List not found");
+  }
+
+  const whereFilter = {
+    listId: args.id,
+    name: {
+      contains: args.searchText ?? "",
+      mode: "insensitive" as const,
+    },
+  };
+
+  const [items, totalCount] = await Promise.all([
+    prisma.item.findMany({
+      where: whereFilter,
+      skip: args.skip ?? 0,
+      take: args.take ?? 5,
+      orderBy: {
+        id: "desc",
+      },
+    }),
+
+    prisma.item.count({
+      where: whereFilter,
+    }),
+  ]);
+
+  return {
+    id: list.id,
+    name: list.name,
+    items,
+    totalCount,
+  };
+},
   },
 
   Mutation: {

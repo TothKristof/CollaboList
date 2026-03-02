@@ -24,7 +24,7 @@ async function main() {
       password: hashedAdmin2
     },
   });
-  
+
   const mouse = await prisma.item.create({
     data: {
       ownerId: user1.id,
@@ -58,6 +58,42 @@ async function main() {
       addDate: new Date("2025-01-12"),
       lastUpdatedDate: new Date("2025-01-12"),
       link: "https://www.arukereso.hu/fulhallgato-fejhallgato-c3109/sony/wh-1000xm5-p917190654/",
+    },
+  });
+
+  const headset = await prisma.item.create({
+    data: {
+      ownerId: user1.id,
+      name: "SteelSeries Arctis 7 Wireless Headset",
+      price: 45990,
+      category: Category.Gaming,
+      addDate: new Date("2025-01-12"),
+      lastUpdatedDate: new Date("2025-01-12"),
+      link: "https://www.arukereso.hu/fulhallgato-fejhallgato-c3109/steelseries/arctis-7-p371749776/",
+    },
+  });
+
+  const monitor = await prisma.item.create({
+    data: {
+      ownerId: user1.id,
+      name: "ASUS TUF Gaming VG27AQ Monitor",
+      price: 129990,
+      category: Category.Gaming,
+      addDate: new Date("2025-01-13"),
+      lastUpdatedDate: new Date("2025-01-13"),
+      link: "https://www.arukereso.hu/monitor-c3126/asus/tuf-gaming-vg27aq-p484737584/",
+    },
+  });
+
+  const mousepad = await prisma.item.create({
+    data: {
+      ownerId: user1.id,
+      name: "SteelSeries QcK Heavy XXL Mousepad",
+      price: 9990,
+      category: Category.Gaming,
+      addDate: new Date("2025-01-15"),
+      lastUpdatedDate: new Date("2025-01-15"),
+      link: "https://www.arukereso.hu/egerpad-c4134/steelseries/qck-heavy-xxl-p254783552/",
     },
   });
 
@@ -107,6 +143,9 @@ async function main() {
           { id: mouse.id },
           { id: keyboard.id },
           { id: headphones.id },
+          { id: monitor.id },
+          { id: mousepad.id },
+          { id: headset.id }
         ],
       },
     },

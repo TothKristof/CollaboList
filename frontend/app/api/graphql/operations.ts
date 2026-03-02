@@ -1,10 +1,11 @@
 import { gql } from "@apollo/client";
 
 export const GET_LIST_ITEMS = gql`
-query getListItems($getListItemsId: Int!, $searchText: String) {
-  getListItems(id: $getListItemsId, searchText: $searchText) {
+query getListItems($getListItemsId: Int!, $searchText: String, $take: Int, $skip: Int) {
+  getListItems(id: $getListItemsId, skip: $skip, take: $take, searchText: $searchText) {
     id
     name
+    totalCount
     items {
       addDate
       category
