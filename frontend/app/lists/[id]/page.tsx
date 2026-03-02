@@ -2,7 +2,7 @@
 import { useParams } from 'next/navigation'
 import { ListDiv } from './list.styles';
 import { CenterContentDiv, RowWithSpaceBetween } from '@/app/global.styles';
-import { Heading, Button, Stack, Input } from '@kinsta/stratus';
+import { Heading, Button, Stack, Input, Counter } from '@kinsta/stratus';
 import ItemTable from '@/components/ItemTable';
 import { Item } from '@/types/itemType';
 import { useListItems } from '@/app/features/lists/useListItems';
@@ -27,7 +27,8 @@ function ListPage() {
         priceDiffMap,
         refetchItems,
         setSearchText,
-        searchText
+        searchText,
+        totalCount
     } =
         useListItems(listId);
 
@@ -44,7 +45,14 @@ function ListPage() {
         <CenterContentDiv>
             <ListDiv>
                 <RowWithSpaceBetween>
-                    <Heading size='l'>{listName}</Heading>
+                    <Stack direction='row'>
+                        <Heading size='l'>{listName}</Heading>
+                        <Counter
+                            currentValue={totalCount}
+                            minValue={0}
+                            maxValue={50}
+                        ></Counter>
+                    </Stack>
                     <div
                         style={{
                             display: 'flex',
@@ -61,16 +69,19 @@ function ListPage() {
                             }}
                         />
                     </div>
-                    <Stack direction='row'>
+                    <Stack
+                        direction='row'
+                        gap={300}
+                    >
                         <Button
                             onClick={() => handleUpdateAllPrices()}>
                             Update all price
                         </Button>
-                        <div>Item count: {items?.length}</div>
                     </Stack>
                 </RowWithSpaceBetween>
                 <ItemTable
                     tableData={items}
+                    listId={listId}
                     actions={{
                         onEditPrice: (item) => {
                             editPrice({ itemId: item.id, newPrice: item.price });

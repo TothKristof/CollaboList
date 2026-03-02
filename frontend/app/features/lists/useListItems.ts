@@ -6,16 +6,19 @@ import type { Item } from '@/types/itemType';
 export function useListItems(listId: number) {
     const [priceDiffMap, setPriceDiffMap] = useState<Record<number, string>>({});
     const [searchText, setSearchText] = useState("")
+    const [take, setTake] = useState(4)
+    const [skip, setSkip] = useState(0)
 
-    const { loading, error, data, refetch, networkStatus } = useQuery(
+    const { loading, error, data, refetch } = useQuery(
         GET_LIST_ITEMS,
         {
             skip: !listId,
             variables: {
                 getListItemsId: listId,
                 searchText: searchText,
+                take: take,
+                skip: skip
             },
-            notifyOnNetworkStatusChange: true,
         }
     );
 
@@ -23,8 +26,10 @@ export function useListItems(listId: number) {
         refetch({
             getListItemsId: listId,
             searchText,
+            take,
+            skip
         })
-    }, [searchText])
+    }, [searchText, take, skip])
 
     const [updatePrice] = useMutation(UPDATE_PRICE);
 
@@ -103,5 +108,10 @@ export function useListItems(listId: number) {
         refetchItems: refetch,
         setSearchText,
         searchText,
+        take,
+        setTake,
+        skip,
+        setSkip,
+        totalCount: data?.getListItems.totalCount
     };
 }

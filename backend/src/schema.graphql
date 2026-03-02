@@ -42,11 +42,18 @@ type UserDatas{
   lists: [List]
 }
 
+type ListWithItems {
+  id: Int!
+  name: String!
+  items: [Item!]!
+  totalCount: Int!
+}
+
 type Query {
   users: [User]
   me: User
   userData: UserDatas
-  getListItems(id: Int!, searchText: String): List
+  getListItems(id: Int!, searchText: String, skip: Int, take: Int): ListWithItems!
 }
 
 type Mutation{

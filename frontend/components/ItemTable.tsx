@@ -5,9 +5,11 @@ import { categories } from '@/data/categories'
 import { Check, Edit, Globe, Trash } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { css, useTheme } from '@emotion/react';
+import { useListItems } from '@/app/features/lists/useListItems';
 
 interface TableProps {
     tableData: Item[];
+    listId: number;
     actions?: {
         onEditPrice: (item: Item) => void;
         onDelete: (item: Item) => void;
@@ -16,11 +18,20 @@ interface TableProps {
 }
 
 
-function ItemTable({ tableData, actions, priceDiffMap }: TableProps) {
+function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
     const [editedItemId, setEditedItemId] = useState<number | null>(null);
     const [editedPrice, setEditedPrice] = useState<number>(0);
     const theme = useTheme();
     console.log(tableData)
+
+    const {
+        take,
+        setTake,
+        skip,
+        setSkip,
+        totalCount
+    } =
+        useListItems(listId);
 
     const columns = useMemo<TableColumnDef<Item>[]>(() => [
         {
@@ -164,6 +175,18 @@ function ItemTable({ tableData, actions, priceDiffMap }: TableProps) {
             columns={columns}
             data={tableData}
             rowKey="id"
+            isPaginationEnabled={true}
+            pagination={{
+                defaultPageSize: take,
+                defaultPageIndex: skip / take + 1,
+
+                onPaginationChanged: (pagination) => {
+                    const skipCount = (pagination.currentPage - 1) * take
+                    setSkip(skipCount)
+                },
+
+                totalCount: totalCount,
+            }}
             customStyles={{
                 tableRowStyles: css`
                 color: ${theme.colors.background}
