@@ -1,3 +1,4 @@
+"use client"
 import { Item } from '@/types/itemType'
 import { Button, Stack, Table, TableColumnDef, Tooltip } from '@kinsta/stratus'
 import { categories } from '@/data/categories'
@@ -19,8 +20,9 @@ function ItemTable({ tableData, actions, priceDiffMap }: TableProps) {
     const [editedItemId, setEditedItemId] = useState<number | null>(null);
     const [editedPrice, setEditedPrice] = useState<number>(0);
     const theme = useTheme();
+    console.log(tableData)
 
-    const columns: TableColumnDef<Item>[] = [
+    const columns = useMemo<TableColumnDef<Item>[]>(() => [
         {
             id: "category",
             header: "",
@@ -155,7 +157,7 @@ function ItemTable({ tableData, actions, priceDiffMap }: TableProps) {
             },
         },
 
-    ]
+    ], [editedItemId, editedPrice, priceDiffMap, actions, theme]);
 
     return (
         <Table<Item>

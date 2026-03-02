@@ -46,7 +46,7 @@ type Query {
   users: [User]
   me: User
   userData: UserDatas
-  getListItems(id: Int!): List
+  getListItems(id: Int!, searchText: String): List
 }
 
 type Mutation{
