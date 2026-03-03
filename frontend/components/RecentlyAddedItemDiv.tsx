@@ -3,6 +3,15 @@ import { RowWithSpaceBetween } from '@/app/global.styles'
 import { Heading, space } from '@kinsta/stratus';
 import { Item } from '@/types/itemType';
 import ItemTable from './ItemTable';
+import ItemCard from "./ItemCard";
+
+const ItemGridContainer = styled("div")({
+  display: "grid",
+  gridTemplateColumns: "repeat(3, 1fr)",
+  gridTemplateRows: "repeat(2, auto)",
+  gap: "16px",
+  height: "90%",
+});
 
 const RecentlyAddedItems = styled.div((props) => ({
     height: '100%',
@@ -17,24 +26,18 @@ type Props = {
 
 function RecentlyAddedItemDiv({ items }: Props) {
     console.log(items)
-    const sortedItems = items
-        .slice()
-        .sort((a, b) => b.addDate.getTime() - a.addDate.getTime())
 
     return (
         <RecentlyAddedItems>
             <RowWithSpaceBetween>
                 <Heading size='l'>Recently Added Items</Heading>
             </RowWithSpaceBetween>
-            <div
-                style={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                }}
-            >
-                <ItemTable tableData={sortedItems}></ItemTable>
-            </div>
+            <ItemGridContainer>
+                {/* <ItemTable tableData={sortedItems}></ItemTable> */}
+                {items.map((item, index) => (
+                    <ItemCard item={item} key={index}></ItemCard>
+                ))}
+            </ItemGridContainer>
         </RecentlyAddedItems>
     )
 }

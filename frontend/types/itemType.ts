@@ -1,4 +1,5 @@
 import { CategoryKey } from "./categoryType"
+import { List } from "./listType";
 
 export interface Item {
     id: number,
@@ -7,6 +8,7 @@ export interface Item {
     price: number,
     category: CategoryKey
     addDate: Date,
+    list: List,
     lastUpdatedDate: Date,
     link: string;
 }

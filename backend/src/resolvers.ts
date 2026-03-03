@@ -23,64 +23,74 @@ export const resolvers = {
     userData: async (_, __, context) => {
       requireAuth(context);
 
-      return prisma.user.findUnique({
-        where: { id: context.userId },
-        include: {
-          items: true,
-          lists: {
-            include: {
-              items: true,
-            },
-          },
+      const lists = prisma.list.findMany({
+        where: {
+          ownerId: context.userId
         }
       });
+
+      const items = await prisma.item.findMany({
+        where: {
+          ownerId: context.userId,
+        },
+        include: {
+          list: true,
+        },
+        orderBy: {
+          addDate: "desc",
+        },
+        take: 6,
+      })
+
+      return {
+        items,
+        lists
+      }
     },
 
-getListItems: async (_, args, context) => {
-  if (!context.userId) {
-    throw new Error("Not authenticated");
-  }
+    getListItems: async (_, args, context) => {
+      requireAuth(context);
 
-  const list = await prisma.list.findUnique({
-    where: {
-      id: args.id,
+      const list = await prisma.list.findUnique({
+        where: {
+          id: args.id,
+        },
+      });
+
+      if (!list) {
+        throw new Error("List not found");
+      }
+
+      const whereFilter = {
+        listId: args.id,
+        name: {
+          contains: args.searchText ?? "",
+          mode: "insensitive" as const,
+        },
+      };
+
+      const [items, totalCount] = await Promise.all([
+        prisma.item.findMany({
+          where: whereFilter,
+          skip: args.skip ?? 0,
+          take: args.take ?? 5,
+          orderBy: {
+            id: "desc",
+          },
+        }),
+
+        prisma.item.count({
+          where: whereFilter,
+        }),
+      ]);
+
+      return {
+        id: list.id,
+        name: list.name,
+        items,
+        totalCount,
+      };
     },
-  });
-
-  if (!list) {
-    throw new Error("List not found");
-  }
-
-  const whereFilter = {
-    listId: args.id,
-    name: {
-      contains: args.searchText ?? "",
-      mode: "insensitive" as const,
-    },
-  };
-
-  const [items, totalCount] = await Promise.all([
-    prisma.item.findMany({
-      where: whereFilter,
-      skip: args.skip ?? 0,
-      take: args.take ?? 5,
-      orderBy: {
-        id: "desc",
-      },
-    }),
-
-    prisma.item.count({
-      where: whereFilter,
-    }),
-  ]);
-
-  return {
-    id: list.id,
-    name: list.name,
-    items,
-    totalCount,
-  };
-},
   },
 
   Mutation: {
