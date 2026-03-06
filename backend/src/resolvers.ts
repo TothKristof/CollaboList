@@ -10,8 +10,10 @@ import { userService } from './services/user.service';
 import { itemService } from './services/item.service';
 import { listService } from './services/list.service';
 import { Context } from './types/context';
+import { dateScalar } from './utils/dateScalar';
 
 export const resolvers = {
+  Date: dateScalar,
   Query: {
     users: async () => {
       return userService.findAllUser();

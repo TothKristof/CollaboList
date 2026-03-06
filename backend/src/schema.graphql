@@ -1,3 +1,5 @@
+scalar Date
+
 type User {
   id: Int!
   email: String
@@ -16,8 +18,8 @@ type Item {
   price: Int!
   category: Category!
   link: String!
-  addDate: String!
-  lastUpdatedDate: String!
+  addDate: Date!
+  lastUpdatedDate: Date!
   list: List
 }
 

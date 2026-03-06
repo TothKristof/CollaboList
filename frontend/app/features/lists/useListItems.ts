@@ -86,20 +86,10 @@ export function useListItems(listId: number) {
         setPriceDiffMap(diffMap);
     };
 
-    const transformedItems = useMemo(() => {
-        const items = data?.getListItems.items ?? [];
-
-        return items.map((item: Item) => ({
-            ...item,
-            addDate: new Date(Number(item.addDate)),
-            lastUpdatedDate: new Date(Number(item.lastUpdatedDate)),
-        }));
-    }, [data?.getListItems.items]);
-
     return {
         loading,
         error,
-        items: transformedItems,
+        items: data?.getListItems.items ?? [],
         listName: data?.getListItems.name,
         updatePrice,
         deleteItem,

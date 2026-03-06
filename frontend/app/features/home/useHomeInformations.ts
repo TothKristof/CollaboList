@@ -20,21 +20,10 @@ export function useHomeInformations() {
         }
     }, [isAuthenticated]);
 
-
-    const transformedItems = useMemo(() => {
-        const items = data?.userData.items ?? [];
-
-        return items.map((item: Item) => ({
-            ...item,
-            addDate: new Date(Number(item.addDate)),
-            lastUpdatedDate: new Date(Number(item.lastUpdatedDate)),
-        }));
-    }, [data?.userData]);
-
     return {
         loading,
         error,
-        items: transformedItems,
+        items: data?.userData.items ?? [],
         lists: data?.userData?.lists ?? []
     }
 }
