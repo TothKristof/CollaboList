@@ -70,13 +70,13 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
             header: 'Last updated',
             accessorKey: 'lastUpdated',
             cell: ({ row }) =>
-                row.original.lastUpdatedDate.toDateString(),
+                row.original.lastUpdatedDate,
         },
         {
             id: 'added',
             header: 'Added',
             cell: ({ row }) =>
-                row.original.addDate.toDateString(),
+                row.original.addDate,
         },
         {
             id: 'price',
