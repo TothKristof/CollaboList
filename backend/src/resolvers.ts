@@ -2,64 +2,36 @@ import 'dotenv/config'
 import { prisma } from "./prismaClient"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Category } from "@prisma/client";
+import { Category } from "./generated/prisma";
 import { requireAuth } from './utils/auth';
-import { getItemOrThrow, fetchPriceFromUrl } from './services/item.service';
+import { ValidationError, UnauthorizedError, NotFoundError } from './errors/AppError';
+import { handlePrismaError } from './errors/prismaErrorHandler';
+import { userService } from './services/user.service';
+import { itemService } from './services/item.service';
+import { listService } from './services/list.service';
+import { Context } from './types/context';
 
 export const resolvers = {
   Query: {
     users: async () => {
-      return await prisma.user.findMany();
+      return userService.findAllUser();
     },
 
-    me: async (_, __, context) => {
-      requireAuth(context);
-
-      return prisma.user.findUnique({
-        where: { id: context.userId }
-      });
+    me: async (_: unknown, __: unknown, context: Context) => {
+      return userService.fetchLoggedInUser(context);
     },
 
-    userData: async (_, __, context) => {
-      requireAuth(context);
+    userData: async (_: unknown, __: unknown, context: Context) => {
+      const [lists, items] = await Promise.all([
+        listService.getAllListOfUser(context),
+        itemService.getUserRecentlyAddedItems(context),
+      ]);
 
-      const lists = prisma.list.findMany({
-        where: {
-          ownerId: context.userId
-        }
-      });
-
-      const items = await prisma.item.findMany({
-        where: {
-          ownerId: context.userId,
-        },
-        include: {
-          list: true,
-        },
-        orderBy: {
-          addDate: "desc",
-        },
-        take: 6,
-      })
-
-      return {
-        items,
-        lists
-      }
+      return { items, lists };
     },
 
-    getListItems: async (_, args, context) => {
-      requireAuth(context);
-
-      const list = await prisma.list.findUnique({
-        where: {
-          id: args.id,
-        },
-      });
-
-      if (!list) {
-        throw new Error("List not found");
-      }
+    getListItems: async (_: unknown, args: { id: number; searchText?: string; skip?: number; take?: number }, context: Context) => {
+      const list = await listService.getListById(context, args.id);
 
       const whereFilter = {
         listId: args.id,
@@ -74,19 +46,14 @@ export const resolvers = {
           where: whereFilter,
           skip: args.skip ?? 0,
           take: args.take ?? 5,
-          orderBy: {
-            id: "desc",
-          },
+          orderBy: { id: "desc" },
         }),
-
-        prisma.item.count({
-          where: whereFilter,
-        }),
+        prisma.item.count({ where: whereFilter }),
       ]);
 
       return {
-        id: list.id,
-        name: list.name,
+        id: list!.id,
+        name: list!.name,
         items,
         totalCount,
       };
@@ -94,27 +61,18 @@ export const resolvers = {
   },
 
   Mutation: {
-    register: async (_, args) => {
-      return prisma.user.create({
-        data: {
-          email: args.email,
-          password: args.password,
-        },
-      });
+    register: async (_: unknown, args: { email: string; password: string }) => {
+      return userService.register(args.email, args.password);
     },
 
-    login: async (_, args, context) => {
-      const user = await prisma.user.findUnique({
-        where: { email: args.email }
-      });
+    login: async (_: unknown, args: { email: string; password: string }, context: Context) => {
+      const user = await userService.findUserByEmail(args.email);
 
-      if (!user) throw new Error("Invalid credentials");
-
-      const valid = await bcrypt.compare(args.password, user.password);
-      if (!valid) throw new Error("Invalid credentials");
+      const valid = await bcrypt.compare(args.password, user!.password);
+      if (!valid) throw new ValidationError("Invalid credentials");
 
       const token = jwt.sign(
-        { userId: user.id },
+        { userId: user!.id },
         process.env.JWT_SECRET!,
         { expiresIn: "7d" }
       );
@@ -124,13 +82,10 @@ export const resolvers = {
         `auth_token=${token}; HttpOnly; Path=/; Max-Age=604800; SameSite=Lax`
       );
 
-      return {
-        token: "logged-in",
-        user
-      };
+      return { token: "logged-in", user };
     },
 
-    logout: async (_, __, context) => {
+    logout: async (_: unknown, __: unknown, context: Context) => {
       context.res.setHeader(
         "Set-Cookie",
         `auth_token=; HttpOnly; Path=/; Max-Age=0`
@@ -138,92 +93,57 @@ export const resolvers = {
       return true;
     },
 
-    addList: async (_: any, args: { name: string; category: string }, context: any) => {
+    addList: async (_: unknown, args: { name: string; category: Category }, context: Context) => {
+      return listService.addNewList(context, args.name, args.category);
+    },
+
+    updatePrice: async (_: unknown, { itemId, newPrice }: { itemId: number; newPrice: number }, context: Context) => {
+      requireAuth(context);
+      return itemService.updatePriceOfItem(itemId, newPrice);
+    },
+
+    deleteItem: async (_: unknown, args: { itemId: number }, context: Context) => {
       requireAuth(context);
 
-      const newList = await prisma.list.create({
-        data: {
-          name: args.name,
-          category: args.category as Category,
-          ownerId: context.userId,
-        },
-        include: {
-          items: true,
-        },
-      });
-
-      return newList;
+      try {
+        return await prisma.item.delete({
+          where: { id: args.itemId },
+        });
+      } catch (error) {
+        handlePrismaError(error);
+      }
     },
 
-    updatePrice: async (_, args, context) => {
+    updatePriceFromUrl: async (_: unknown, { itemId }: { itemId: number }, context: Context) => {
       requireAuth(context);
 
-      const updatedItem = await prisma.item.update({
-        where: { id: args.itemId },
-        data: {
-          price: args.newPrice,
-          lastUpdatedDate: new Date()
-        },
-      });
-
-      return updatedItem;
+      const item = await itemService.getItemById(itemId);
+      const numericPrice = await itemService.fetchPriceFromUrl(item!.link);
+      return itemService.updatePriceOfItem(itemId, numericPrice);
     },
 
-    deleteItem: async (_, args, context) => {
-      if (!context.userId) {
-        throw new Error("Not authenticated");
+    updateAllPricesFromUrl: async (_: unknown, { listId }: { listId: number }, context: Context) => {
+      requireAuth(context);
+
+      try {
+        const items = await prisma.item.findMany({ where: { listId } });
+
+        const results = await Promise.allSettled(
+          items.map(async (item) => {
+            const numericPrice = await itemService.fetchPriceFromUrl(item.link);
+            return prisma.item.update({
+              where: { id: item.id },
+              data: { price: numericPrice, lastUpdatedDate: new Date() },
+            });
+          })
+        );
+
+        return results
+          .filter((r): r is PromiseFulfilledResult<typeof results[0] extends PromiseFulfilledResult<infer T> ? T : never> => r.status === "fulfilled")
+          .map((r) => r.value);
+      } catch (error) {
+        handlePrismaError(error);
       }
-
-      const deletedUser = await prisma.item.delete({
-        where: { id: args.itemId },
-      });
-
-      return deletedUser;
     },
-
-    updatePriceFromUrl: async (_, { itemId }, context) => {
-      const item = await getItemOrThrow(itemId)
-      const numericPrice = await fetchPriceFromUrl(item.link)
-
-      const updatedItem = await prisma.item.update({
-        where: { id: itemId },
-        data: {
-          price: numericPrice,
-          lastUpdatedDate: new Date(),
-        },
-      });
-
-      return updatedItem;
-    },
-
-    updateAllPricesFromUrl: async (_, { listId }) => {
-      const items = await prisma.item.findMany({
-        where: { listId },
-      });
-
-      const updatedItems = [];
-
-      for (const item of items) {
-        try {
-          const numericPrice = await fetchPriceFromUrl(item.link)
-
-          if (!numericPrice) continue;
-
-          const updatedItem = await prisma.item.update({
-            where: { id: item.id },
-            data: {
-              price: numericPrice,
-              lastUpdatedDate: new Date(),
-            },
-          });
-
-          updatedItems.push(updatedItem);
-        } catch (err) {
-          console.log(`Failed to update item ${item.name}`);
-        }
-      }
-
-      return updatedItems;
-    }
   },
 };

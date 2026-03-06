@@ -5,15 +5,36 @@ import path from "path";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
 import { resolvers } from "./resolvers";
+import { GraphQLError } from 'graphql';
+import { AppError } from './errors/AppError';
+import { Context } from "./types/context";
 
 const typeDefs = fs.readFileSync(
   path.join(process.cwd(), "src/schema.graphql"),
   "utf8"
 );
 
-const server = new ApolloServer({
+const server = new ApolloServer<Context>({
   typeDefs,
   resolvers,
+  formatError: (formattedError, error) => {
+    if (!(error instanceof AppError)) {
+      console.error('[Unexpected Error]', error);
+    }
+
+    if (error instanceof GraphQLError && error.extensions?.code !== 'INTERNAL_SERVER_ERROR') {
+      return formattedError;
+    }
+
+
+    if (process.env.NODE_ENV === 'production') {
+      return new GraphQLError('Internal server error', {
+        extensions: { code: 'INTERNAL_SERVER_ERROR' },
+      });
+    }
+
+    return formattedError;
+  },
 });
 
 const { url } = await startStandaloneServer(server, {

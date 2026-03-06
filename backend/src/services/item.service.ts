@@ -1,29 +1,96 @@
 import { prisma } from "../prismaClient";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import * as cheerio from "cheerio";
+import { handlePrismaError } from "../errors/prismaErrorHandler";
+import {
+  NotFoundError,
+  ExternalServiceError,
+  ParseError,
+} from "../errors/AppError";
+import { Context } from "../types/context";
 
-export async function fetchPriceFromUrl(url: string): Promise<number> {
-  const response = await axios.get(url);
+async function fetchPriceFromUrl(url: string): Promise<number> {
+  let html: string;
 
-  const $ = cheerio.load(response.data);
+  try {
+    const response = await axios.get(url, { timeout: 8000 });
+    html = response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new ExternalServiceError(
+        url,
+        error.response
+          ? `HTTP ${error.response.status}`
+          : "Network error or timeout"
+      );
+    }
+    throw new ExternalServiceError(url);
+  }
+
+  const $ = cheerio.load(html);
   const priceText = $(".price").first().text();
-  const numericPrice = parseInt(priceText.replace(/\D/g, ""));
+  const numericPrice = parseInt(priceText.replace(/\D/g, ""), 10);
 
-  if (!numericPrice) {
-    throw new Error("Price not found");
+  if (!numericPrice || isNaN(numericPrice)) {
+    throw new ParseError("price — .price selector returned no valid number");
   }
 
   return numericPrice;
 }
 
-export async function getItemOrThrow(itemId: number) {
-  const item = await prisma.item.findUnique({
-    where: { id: itemId },
-  });
+async function getItemById(itemId: number) {
+  try {
+    const item = await prisma.item.findUnique({
+      where: { id: itemId },
+    });
 
-  if (!item) {
-    throw new Error("Item not found");
+    if (!item) {
+      throw new NotFoundError("Item");
+    }
+
+    return item;
+  } catch (error) {
+    if (error instanceof NotFoundError) throw error;
+    handlePrismaError(error);
   }
-
-  return item;
 }
+
+async function getUserRecentlyAddedItems(context: Context) {
+  try {
+    return await prisma.item.findMany({
+      where: {
+        ownerId: context.userId,
+      },
+      include: {
+        list: true,
+      },
+      orderBy: {
+        addDate: "desc",
+      },
+      take: 6,
+    });
+  } catch (error) {
+    handlePrismaError(error);
+  }
+}
+
+async function updatePriceOfItem(itemId: number, numericPrice: number) {
+  try {
+    return await prisma.item.update({
+      where: { id: itemId },
+      data: {
+        price: numericPrice,
+        lastUpdatedDate: new Date(),
+      },
+    });
+  } catch (error) {
+    handlePrismaError(error); // P2025 → NotFoundError("Record") automatikusan
+  }
+}
+
+export const itemService = {
+  fetchPriceFromUrl,
+  getItemById,
+  getUserRecentlyAddedItems,
+  updatePriceOfItem,
+};
