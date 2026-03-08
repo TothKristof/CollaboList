@@ -52,7 +52,6 @@ type ListWithItems {
 }
 
 type Query {
-  users: [User]
   me: User
   userData: UserDatas
   getListItems(id: Int!, searchText: String, skip: Int, take: Int): ListWithItems!

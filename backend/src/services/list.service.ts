@@ -4,6 +4,7 @@ import { NotFoundError } from "../errors/AppError";
 import { handlePrismaError } from "../errors/prismaErrorHandler";
 import { Context } from "../types/context";
 import { Category } from "../generated/prisma";
+import { UnauthorizedError } from "../errors/AppError";
 
 async function getAllListOfUser(context: Context) {
   requireAuth(context);
@@ -28,6 +29,7 @@ async function getListById(context: Context, id: number) {
     });
 
     if (!list) throw new NotFoundError("List");
+    if(list.ownerId !== context.userId) throw new UnauthorizedError();
 
     return list;
   } catch (error) {

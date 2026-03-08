@@ -6,8 +6,10 @@ import {
   NotFoundError,
   ExternalServiceError,
   ParseError,
+  UnauthorizedError,
 } from "../errors/AppError";
 import { Context } from "../types/context";
+import { requireAuth } from "../utils/auth";
 
 async function fetchPriceFromUrl(url: string): Promise<number> {
   let html: string;
@@ -38,15 +40,16 @@ async function fetchPriceFromUrl(url: string): Promise<number> {
   return numericPrice;
 }
 
-async function getItemById(itemId: number) {
+async function getItemById(itemId: number, context: Context) {
+  requireAuth(context);
   try {
     const item = await prisma.item.findUnique({
       where: { id: itemId },
     });
 
-    if (!item) {
-      throw new NotFoundError("Item");
-    }
+    if (!item) throw new NotFoundError("Item");
+    if(item.ownerId !== context.userId) throw new UnauthorizedError();
+
 
     return item;
   } catch (error) {
@@ -56,6 +59,7 @@ async function getItemById(itemId: number) {
 }
 
 async function getUserRecentlyAddedItems(context: Context) {
+  requireAuth(context);
   try {
     return await prisma.item.findMany({
       where: {
@@ -84,7 +88,7 @@ async function updatePriceOfItem(itemId: number, numericPrice: number) {
       },
     });
   } catch (error) {
-    handlePrismaError(error); // P2025 → NotFoundError("Record") automatikusan
+    handlePrismaError(error);
   }
 }
 

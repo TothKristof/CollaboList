@@ -15,10 +15,6 @@ import { dateScalar } from './utils/dateScalar';
 export const resolvers = {
   Date: dateScalar,
   Query: {
-    users: async () => {
-      return userService.findAllUser();
-    },
-
     me: async (_: unknown, __: unknown, context: Context) => {
       return userService.fetchLoggedInUser(context);
     },

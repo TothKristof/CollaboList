@@ -21,14 +21,6 @@ async function fetchLoggedInUser(context: Context) {
   }
 }
 
-async function findAllUser() {
-  try {
-    return await prisma.user.findMany();
-  } catch (error) {
-    handlePrismaError(error);
-  }
-}
-
 async function register(email: string, password: string) {
   try {
     return await prisma.user.create({
@@ -59,7 +51,6 @@ async function findUserByEmail(email: string) {
 
 export const userService = {
   fetchLoggedInUser,
-  findAllUser,
   register,
   findUserByEmail,
 };
