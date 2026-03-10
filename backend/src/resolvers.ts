@@ -2,10 +2,9 @@ import 'dotenv/config'
 import { prisma } from "./prismaClient"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Category } from "./generated/prisma";
+import { Category, ListRole } from "./generated/prisma";
 import { requireAuth } from './utils/auth';
-import { ValidationError, UnauthorizedError, NotFoundError } from './errors/AppError';
-import { handlePrismaError } from './errors/prismaErrorHandler';
+import { ValidationError} from './errors/AppError';
 import { userService } from './services/user.service';
 import { itemService } from './services/item.service';
 import { listService } from './services/list.service';
@@ -100,48 +99,24 @@ export const resolvers = {
       return itemService.updatePriceOfItem(itemId, newPrice);
     },
 
-    deleteItem: async (_: unknown, args: { itemId: number }, context: Context) => {
-      requireAuth(context);
-
-      try {
-        return await prisma.item.delete({
-          where: { id: args.itemId },
-        });
-      } catch (error) {
-        handlePrismaError(error);
-      }
+    deleteItem: async (_: unknown, { itemId }: { itemId: number }, context: Context) => {
+      return itemService.deleteItem(context, itemId);
     },
 
     updatePriceFromUrl: async (_: unknown, { itemId }: { itemId: number }, context: Context) => {
-      requireAuth(context);
-
-      const item = await itemService.getItemById(itemId);
-      const numericPrice = await itemService.fetchPriceFromUrl(item!.link);
-      return itemService.updatePriceOfItem(itemId, numericPrice);
+      return itemService.updatePriceFromUrl(context, itemId);
     },
 
     updateAllPricesFromUrl: async (_: unknown, { listId }: { listId: number }, context: Context) => {
-      requireAuth(context);
-
-      try {
-        const items = await prisma.item.findMany({ where: { listId } });
-
-        const results = await Promise.allSettled(
-          items.map(async (item) => {
-            const numericPrice = await itemService.fetchPriceFromUrl(item.link);
-            return prisma.item.update({
-              where: { id: item.id },
-              data: { price: numericPrice, lastUpdatedDate: new Date() },
-            });
-          })
-        );
-
-        return results
-          .filter((r): r is PromiseFulfilledResult<typeof results[0] extends PromiseFulfilledResult<infer T> ? T : never> => r.status === "fulfilled")
-          .map((r) => r.value);
-      } catch (error) {
-        handlePrismaError(error);
-      }
+      return itemService.updateAllPricesFromUrl(context, listId);
     },
+
+    addNewMemberToList: async (
+      _: unknown,
+      { listUser }: { listUser: { listId: number; userId: number; listRole: ListRole } },
+      context: Context
+    ) => {
+      return listService.addNewMemberToList(context, listUser.userId, listUser.listId, listUser.listRole);
+    }
   },
 };

@@ -135,7 +135,6 @@ async function main() {
 
   await prisma.list.create({
     data: {
-      ownerId: user1.id,
       name: "Gaming setup",
       category: Category.Gaming,
       items: {
@@ -148,28 +147,40 @@ async function main() {
           { id: headset.id }
         ],
       },
+      listUsers: {
+        create: [
+          { userId: user1.id, role: "OWNER" },
+          { userId: user2.id, role: "COLLABORATOR" },
+        ]
+      }
     },
   });
 
   await prisma.list.create({
     data: {
-      ownerId: user1.id,
       name: "Smart home & gadgets",
       category: Category.HomeLiving,
       items: {
         connect: [{ id: hue.id }],
       },
+      listUsers: {
+        create: [{ userId: user1.id, role: "OWNER" }]
+      }
     },
   });
 
   await prisma.list.create({
     data: {
-      ownerId: user2.id,
       name: "Tech upgrades",
       category: Category.Technology,
       items: {
         connect: [{ id: ssd.id }, { id: controller.id }],
       },
+      listUsers: {
+        create: [
+          { userId: user2.id, role: "OWNER" }
+        ]
+      }
     },
   });
 
