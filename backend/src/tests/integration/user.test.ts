@@ -1,10 +1,11 @@
 import { userService } from "../../services/user.service";
 import { resetDatabase, disconnectDatabase } from "../helpers/dbSetup";
-import { seedUser } from "../helpers/seed";
+import { seedUser, resetUserCount } from "../helpers/seed";
 import { NotFoundError, UnauthorizedError, ValidationError } from "../../errors/AppError";
 
 beforeEach(async () => {
     await resetDatabase();
+    resetUserCount()
 });
 
 afterAll(async () => {
@@ -21,7 +22,7 @@ describe("userService", () => {
         it("should throw ValidationError on duplicate email", async () => {
             await seedUser();
             await expect(
-                userService.register("test@test.com", "password123")
+                userService.register("test1@test.com", "password123")
             ).rejects.toThrow(ValidationError);
         });
     });
@@ -29,8 +30,8 @@ describe("userService", () => {
     describe("findUserByEmail", () => {
         it("should return user if exists", async () => {
             await seedUser();
-            const user = await userService.findUserByEmail("test@test.com");
-            expect(user?.email).toBe("test@test.com");
+            const user = await userService.findUserByEmail("test1@test.com");
+            expect(user?.email).toBe("test1@test.com");
         });
 
         it("should throw NotFoundError if user does not exist", async () => {
@@ -47,7 +48,7 @@ describe("userService", () => {
                 userId: user.id,
                 res: {} as any
             });
-            expect(fetchedUser).toMatchObject({ email: "test@test.com" });
+            expect(fetchedUser).toMatchObject({ email: "test1@test.com" });
         });
 
         it("should return unauthorized error", async () => {

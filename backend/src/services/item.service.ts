@@ -10,6 +10,7 @@ import {
 } from "../errors/AppError";
 import { Context } from "../types/context";
 import { requireAuth } from "../utils/auth";
+import { listService } from "./list.service";
 
 async function fetchPriceFromUrl(url: string): Promise<number> {
   let html: string;
@@ -78,15 +79,61 @@ async function getUserRecentlyAddedItems(context: Context) {
   }
 }
 
-async function updatePriceOfItem(itemId: number, numericPrice: number) {
+async function updatePriceOfItem(itemId: number, newPrice: number) {
   try {
     return await prisma.item.update({
       where: { id: itemId },
-      data: {
-        price: numericPrice,
-        lastUpdatedDate: new Date(),
-      },
+      data: { price: newPrice, lastUpdatedDate: new Date() },
     });
+  } catch (error) {
+    handlePrismaError(error);
+  }
+}
+
+async function deleteItem(context: Context, itemId: number) {
+  requireAuth(context);
+
+  const item = await getItemById(itemId, context);
+  if (!item) throw new NotFoundError("Item");
+  if (item.listId) await listService.requireEditPermission(context, item.listId);
+
+  try {
+    return await prisma.item.delete({ where: { id: itemId } });
+  } catch (error) {
+    handlePrismaError(error);
+  }
+}
+
+async function updatePriceFromUrl(context: Context, itemId: number) {
+  requireAuth(context);
+
+  const item = await getItemById(itemId, context);
+  if (!item) throw new NotFoundError("Item");
+  if (item.listId) await listService.requireEditPermission(context, item.listId);
+
+  const numericPrice = await fetchPriceFromUrl(item.link);
+  return updatePriceOfItem(itemId, numericPrice);
+}
+
+async function updateAllPricesFromUrl(context: Context, listId: number) {
+  await listService.requireEditPermission(context, listId);
+
+  try {
+    const items = await prisma.item.findMany({ where: { listId } });
+
+    const results = await Promise.allSettled(
+      items.map(async (item) => {
+        const numericPrice = await fetchPriceFromUrl(item.link);
+        return prisma.item.update({
+          where: { id: item.id },
+          data: { price: numericPrice, lastUpdatedDate: new Date() },
+        });
+      })
+    );
+
+    return results
+      .filter((r): r is PromiseFulfilledResult<Awaited<ReturnType<typeof prisma.item.update>>> => r.status === "fulfilled")
+      .map((r) => r.value);
   } catch (error) {
     handlePrismaError(error);
   }
@@ -97,4 +144,7 @@ export const itemService = {
   getItemById,
   getUserRecentlyAddedItems,
   updatePriceOfItem,
+  deleteItem,
+  updateAllPricesFromUrl,
+  updatePriceFromUrl
 };

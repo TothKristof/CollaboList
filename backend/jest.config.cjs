@@ -6,6 +6,9 @@ module.exports = {
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
+  verbose: true,
+  testPathIgnorePatterns: ["/node_modules/", "/src/generated/"],
+  modulePathIgnorePatterns: ["/src/generated/"],
   globals: {
     "ts-jest": {
       useESM: true,

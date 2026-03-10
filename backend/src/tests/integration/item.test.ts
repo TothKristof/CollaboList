@@ -1,10 +1,11 @@
 import { itemService } from "../../services/item.service.js";
 import { NotFoundError, UnauthorizedError } from "../../errors/AppError.js";
 import { resetDatabase, disconnectDatabase } from "../helpers/dbSetup.js";
-import { seedItem, seedList, seedUser } from "../helpers/seed.js";
+import { seedItem, seedList, seedUser, resetUserCount } from "../helpers/seed.js";
 
 beforeEach(async () => {
     await resetDatabase();
+    resetUserCount()
 });
 
 afterAll(async () => {

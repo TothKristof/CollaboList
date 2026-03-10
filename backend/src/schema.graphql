@@ -34,6 +34,12 @@ enum Category {
   Hobbies
 }
 
+enum ListRole {
+  OWNER
+  COLLABORATOR
+  GUEST
+}
+
 type AuthPayload {
   token: String!
   user: User!
@@ -51,6 +57,12 @@ type ListWithItems {
   totalCount: Int!
 }
 
+input ListUserInput {
+  userId: Int!
+  listId: Int!
+  listRole: ListRole!
+}
+
 type Query {
   me: User
   userData: UserDatas
@@ -66,4 +78,5 @@ type Mutation{
     deleteItem(itemId: Int!): Item!
     updatePriceFromUrl(itemId: Int!): Item!
     updateAllPricesFromUrl(listId: Int!): [Item!]!
+    addNewMemberToList(listUser: ListUserInput!): ListUser!
 }

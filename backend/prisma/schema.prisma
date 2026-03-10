@@ -19,8 +19,28 @@ model User {
   email    String @unique
   password String
 
-  items Item[]
-  lists List[]
+  items     Item[]
+  listUsers ListUser[]
+}
+
+model List {
+  id       Int      @id @default(autoincrement())
+  name     String
+  category Category
+
+  listUsers ListUser[]
+  items     Item[]
+}
+
+model ListUser {
+  userId Int
+  listId Int
+  role   ListRole @default(GUEST)
+
+  user User @relation(fields: [userId], references: [id])
+  list List @relation(fields: [listId], references: [id])
+
+  @@id([userId, listId])
 }
 
 model Item {
@@ -41,15 +61,10 @@ model Item {
   list   List? @relation(fields: [listId], references: [id])
 }
 
-model List {
-  id       Int      @id @default(autoincrement())
-  name     String   
-  category Category
-
-  ownerId Int
-  owner   User @relation(fields: [ownerId], references: [id])
-
-  items Item[]
+enum ListRole {
+  OWNER
+  COLLABORATOR
+  GUEST
 }
 
 enum Category {
