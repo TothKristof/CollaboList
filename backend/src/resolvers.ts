@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Category, ListRole } from "./generated/prisma";
 import { requireAuth } from './utils/auth';
-import { ValidationError} from './errors/AppError';
+import { ValidationError } from './errors/AppError';
 import { userService } from './services/user.service';
 import { itemService } from './services/item.service';
 import { listService } from './services/list.service';
@@ -111,12 +111,18 @@ export const resolvers = {
       return itemService.updateAllPricesFromUrl(context, listId);
     },
 
-    addNewMemberToList: async (
-      _: unknown,
-      { listUser }: { listUser: { listId: number; userId: number; listRole: ListRole } },
-      context: Context
-    ) => {
-      return listService.addNewMemberToList(context, listUser.userId, listUser.listId, listUser.listRole);
+    addNewMemberToList: async (_, { listUser }, context) => {
+      const result = await listService.addNewMemberToList(
+        context, listUser.userId, listUser.listId, listUser.listRole
+      );
+
+      if (!result) throw new Error("Failed to add member");
+
+      return {
+        userId: result.userId,
+        listId: result.listId,
+        listRole: result.role
+      };
     }
   },
 };

@@ -78,3 +78,12 @@ export const UPDATE_ALL_FROM_URL = gql`
   }
 }
 `;
+
+export const ADD_NEW_MEMBER = gql`
+    mutation AddNewMemberToList($listUser: ListUserInput!) {
+        addNewMemberToList(listUser: $listUser) {
+            userId
+            listId
+        }
+    }
+`;

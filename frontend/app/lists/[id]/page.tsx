@@ -2,10 +2,11 @@
 import { useParams } from 'next/navigation'
 import { ListDiv } from './list.styles';
 import { CenterContentDiv, RowWithSpaceBetween } from '@/app/global.styles';
-import { Heading, Button, Stack, Input, Counter } from '@kinsta/stratus';
+
 import ItemTable from '@/components/ItemTable';
 import { Item } from '@/types/itemType';
 import { useListItems } from '@/app/features/lists/useListItems';
+import ListHeader from '@/components/ListHeader';
 
 
 type EditPriceArgs = {
@@ -20,15 +21,10 @@ function ListPage() {
     const {
         error,
         items,
-        listName,
         updatePrice,
         deleteItem,
-        handleUpdateAllPrices,
         priceDiffMap,
-        refetchItems,
-        setSearchText,
-        searchText,
-        totalCount
+
     } =
         useListItems(listId);
 
@@ -44,41 +40,7 @@ function ListPage() {
     return (
         <CenterContentDiv>
             <ListDiv>
-                <RowWithSpaceBetween>
-                    <Stack direction='row'>
-                        <Heading size='l'>{listName}</Heading>
-                        <Counter
-                            currentValue={totalCount}
-                            minValue={0}
-                            maxValue={50}
-                        ></Counter>
-                    </Stack>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            gap: 16,
-                            width: 300
-                        }}
-                    >
-                        <Input
-                            placeholder="Search item"
-                            value={searchText}
-                            onChange={(e) => {
-                                setSearchText(e.target.value)
-                            }}
-                        />
-                    </div>
-                    <Stack
-                        direction='row'
-                        gap={300}
-                    >
-                        <Button
-                            onClick={() => handleUpdateAllPrices()}>
-                            Update all price
-                        </Button>
-                    </Stack>
-                </RowWithSpaceBetween>
+                <ListHeader listId={listId}></ListHeader>
                 <ItemTable
                     tableData={items}
                     listId={listId}

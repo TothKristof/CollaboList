@@ -63,6 +63,12 @@ input ListUserInput {
   listRole: ListRole!
 }
 
+type ListUser{
+  userId: Int!
+  listId: Int!
+  listRole: ListRole!
+}
+
 type Query {
   me: User
   userData: UserDatas
