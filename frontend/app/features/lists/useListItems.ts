@@ -1,13 +1,15 @@
 import { useQuery, useMutation } from '@apollo/client/react';
-import { GET_LIST_ITEMS, UPDATE_PRICE, DELETE_ITEM, UPDATE_ALL_FROM_URL } from "@/app/api/graphql/operations";
+import { GET_LIST_ITEMS, UPDATE_PRICE, DELETE_ITEM, UPDATE_ALL_FROM_URL, ADD_NEW_MEMBER } from "@/app/api/graphql/operations";
 import { useMemo, useState, useEffect } from 'react';
 import type { Item } from '@/types/itemType';
+import { useDebounce } from '@/hooks/useDebouncer';
 
 export function useListItems(listId: number) {
     const [priceDiffMap, setPriceDiffMap] = useState<Record<number, string>>({});
     const [searchText, setSearchText] = useState("")
     const [take, setTake] = useState(4)
     const [skip, setSkip] = useState(0)
+    const debouncedSearch = useDebounce(searchText, 300);
 
     const { loading, error, data, refetch } = useQuery(
         GET_LIST_ITEMS,
@@ -15,7 +17,7 @@ export function useListItems(listId: number) {
             skip: !listId,
             variables: {
                 getListItemsId: listId,
-                searchText: searchText,
+                searchText: debouncedSearch,
                 take: take,
                 skip: skip
             },
@@ -25,11 +27,11 @@ export function useListItems(listId: number) {
     useEffect(() => {
         refetch({
             getListItemsId: listId,
-            searchText,
+            debouncedSearch,
             take,
             skip
         })
-    }, [searchText, take, skip])
+    }, [debouncedSearch, take, skip])
 
     const [updatePrice] = useMutation(UPDATE_PRICE);
 
@@ -49,6 +51,8 @@ export function useListItems(listId: number) {
             });
         },
     });
+
+    const [addNewMember] = useMutation(ADD_NEW_MEMBER);
 
     const [updateAllPriceFromUrl] = useMutation(UPDATE_ALL_FROM_URL)
 
@@ -102,6 +106,7 @@ export function useListItems(listId: number) {
         setTake,
         skip,
         setSkip,
-        totalCount: data?.getListItems.totalCount
+        totalCount: data?.getListItems.totalCount,
+        addNewMember
     };
 }
