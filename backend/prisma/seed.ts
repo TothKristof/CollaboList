@@ -4,8 +4,9 @@ import { prisma } from "../src/prismaClient.js"
 import bcrypt from "bcrypt";
 
 async function main() {
-  await prisma.list.deleteMany();
+  await prisma.listUser.deleteMany();
   await prisma.item.deleteMany();
+  await prisma.list.deleteMany();
   await prisma.user.deleteMany();
 
   const hashedAdmin = await bcrypt.hash("admin", 10);
@@ -14,14 +15,16 @@ async function main() {
   const user1 = await prisma.user.create({
     data: {
       email: "admin@gmail.com",
-      password: hashedAdmin
+      password: hashedAdmin,
+      username: "Matt Damon"
     },
   });
 
   const user2 = await prisma.user.create({
     data: {
       email: "admin2@gmail.com",
-      password: hashedAdmin2
+      password: hashedAdmin2,
+      username: "Tom Cruise"
     },
   });
 
