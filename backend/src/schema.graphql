@@ -3,6 +3,7 @@ scalar Date
 type User {
   id: Int!
   email: String
+  username: String
 }
 
 type List {
@@ -69,14 +70,29 @@ type ListUser{
   listRole: ListRole!
 }
 
+type ListMember {
+  userId: Int!
+  listId: Int!
+  role: ListRole!
+  user: User!
+}
+
+type ItemFetchData{
+  price: Int!
+  imgLink: String
+}
+
 type Query {
   me: User
   userData: UserDatas
   getListItems(id: Int!, searchText: String, skip: Int, take: Int): ListWithItems!
+  searchUsers(searchText: String!): [User]
+  getListMembers(listId: Int!): [ListMember]
+  getItemDetailsFromUrl(url: String!): ItemFetchData
 }
 
 type Mutation{
-    register(email: String!, password: String!) : User
+    register(email: String!, password: String!, username: String!) : User
     login(email: String!, password: String!) : AuthPayload
     logout: Boolean
     addList(name: String!, category: Category!) : List!

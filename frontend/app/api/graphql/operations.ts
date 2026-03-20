@@ -87,3 +87,26 @@ export const ADD_NEW_MEMBER = gql`
         }
     }
 `;
+
+export const SEARCH_USERS = gql`
+  query SearchUsers($searchText: String!) {
+    searchUsers(searchText: $searchText) {
+      id
+      email
+      username
+    }
+  }
+`;
+
+export const GET_LIST_MEMBERS = gql`
+  query GetListMembers($listId: Int!) {
+    getListMembers(listId: $listId) {
+      user {
+        email
+        id
+        username
+      }
+      role
+    }
+}
+`

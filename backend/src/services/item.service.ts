@@ -41,6 +41,30 @@ async function fetchPriceFromUrl(url: string): Promise<number> {
   return numericPrice;
 }
 
+async function fetchImageFromUrl(url: string): Promise<string> {
+  let html: string;
+
+  try {
+    const response = await axios.get(url, { timeout: 8000 });
+    html = response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      throw new ExternalServiceError(
+        url,
+        error.response ? `HTTP ${error.response.status}` : "Network error or timeout"
+      );
+    }
+    throw new ExternalServiceError(url);
+  }
+
+  const $ = cheerio.load(html);
+  const imgSrc = $('.product-image-wrapper img').attr('src');
+
+  if (!imgSrc) throw new ParseError('No image found for selector ".product-image-wrapper img"');
+
+  return imgSrc;
+}
+
 async function getItemById(itemId: number, context: Context) {
   requireAuth(context);
   try {
@@ -141,6 +165,7 @@ async function updateAllPricesFromUrl(context: Context, listId: number) {
 
 export const itemService = {
   fetchPriceFromUrl,
+  fetchImageFromUrl,
   getItemById,
   getUserRecentlyAddedItems,
   updatePriceOfItem,

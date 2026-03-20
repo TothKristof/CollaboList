@@ -1,39 +1,23 @@
 import { RowWithSpaceBetween } from '@/app/global.styles'
-import { Heading, Button, Stack, Input, Counter, Select, SelectOp } from '@kinsta/stratus';
+import { Heading, Button, Stack, Input, Counter, Tooltip } from '@kinsta/stratus';
 import { useListItems } from '@/app/features/lists/useListItems';
-import { Modal, AutoComplete } from '@kinsta/stratus';
 import { useState } from 'react';
-import { ASSIGNABLE_LIST_ROLES } from '@/data/listRoles';
-import { AssignableListRole } from '@/data/listRoles';
+import { CirclePlus } from 'lucide-react';
+import AddMemberModal from './AddMemberModal';
+import AddItemModal from './AddItemModal';
 
 function ListHeader({ listId }: { listId: number }) {
-    const [isVisible, setIsVisible] = useState(false)
-    const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
-    const [selectedRole, setSelectedRole] = useState<AssignableListRole>("GUEST")
+    const [addMemberModalVisibility, setAddMemberModalVisibilty] = useState(false)
+    const [addItemModalVisibility, setAddItemModalVisibilty] = useState(false)
     const {
         listName,
         handleUpdateAllPrices,
         setSearchText,
         searchText,
-        totalCount,
-        addNewMember
+        totalCount
     } =
         useListItems(listId);
 
-
-    const handleAddMember = async () => {
-        if (!selectedUserId) return;
-        await addNewMember({
-            variables: {
-                listUser: {
-                    listId,
-                    userId: selectedUserId,
-                    listRole: selectedRole
-                }
-            }
-        });
-        setIsVisible(false);
-    };
     return (
         <>
             <RowWithSpaceBetween>
@@ -66,35 +50,25 @@ function ListHeader({ listId }: { listId: number }) {
                     gap={300}
                 >
                     <Button
+                        icon='ArrowsClockwise'
                         onClick={() => handleUpdateAllPrices()}>
                         Update all price
                     </Button>
-                    <Button onClick={() => setIsVisible(true)}>
-                        Add new member
+                    <Button
+                        icon='PersonAdd'
+                        onClick={() => {
+                            setAddMemberModalVisibilty(true)
+                        }}>
+
+                        Add member
                     </Button>
+                    <Tooltip content="Add item">
+                        <CirclePlus style={{ cursor: "pointer" }} onClick={() => setAddItemModalVisibilty(true)} size={30}></CirclePlus>
+                    </Tooltip>
                 </Stack>
             </RowWithSpaceBetween>
-            <Modal
-                isVisible={isVisible}
-                title="Add new member"
-                isClosable
-                onOk={handleAddMember}
-                okText="Add"
-                onCancel={() => setIsVisible(false)}
-            >
-                <Stack direction='column'>
-                    <AutoComplete
-                        label="Search user"
-                        searchIndex={[]}
-                        onChange={(e) => setSelectedUserId(e)}
-                    />
-                    <Select onChange={(value) => setSelectedRole(value as AssignableListRole)}>
-                        {ASSIGNABLE_LIST_ROLES.map((listRole, index) => (
-                            <Select.Option key={index} value={listRole}>{listRole}</Select.Option>
-                        ))}
-                    </Select>
-                </Stack>
-            </Modal>
+            <AddMemberModal isVisible={addMemberModalVisibility} setIsVisible={setAddMemberModalVisibilty} listId={listId}></AddMemberModal>
+            <AddItemModal isVisible={addItemModalVisibility} setIsVisible={setAddItemModalVisibilty} listId={listId}></AddItemModal>
         </>
     )
 }

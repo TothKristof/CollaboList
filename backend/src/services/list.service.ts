@@ -105,11 +105,25 @@ async function addNewMemberToList(context: Context, userId: number, listId: numb
   }
 }
 
+async function getListMembers(listId: number) {
+  try {
+    return await prisma.listUser.findMany({
+        where: { listId: listId },
+        include: { user: true }
+      });
+  } catch (error) {
+    handlePrismaError(error);
+  }
+}
+
+
+
 export const listService = {
   getAllListOfUser,
   getListById,
   addNewList,
   getUserRoleInList,
   requireEditPermission,
-  addNewMemberToList
+  addNewMemberToList,
+  getListMembers
 };

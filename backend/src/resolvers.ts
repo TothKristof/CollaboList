@@ -55,11 +55,29 @@ export const resolvers = {
         totalCount,
       };
     },
+
+    searchUsers: async (_: unknown, args: { searchText: string }, context: Context) => {
+      return userService.findUserByText(args.searchText);
+    },
+
+    getListMembers: async (_, { listId }) => {
+      return listService.getListMembers(listId);
+    },
+
+    getItemDetailsFromUrl: async (_, { url }) => {
+      const price = await itemService.fetchPriceFromUrl(url)
+      const imgLink = await itemService.fetchImageFromUrl(url)
+
+      return {
+        price,
+        imgLink
+      }
+    }
   },
 
   Mutation: {
-    register: async (_: unknown, args: { email: string; password: string }) => {
-      return userService.register(args.email, args.password);
+    register: async (_: unknown, args: { email: string; password: string, username: string }) => {
+      return userService.register(args.email, args.password, args.username);
     },
 
     login: async (_: unknown, args: { email: string; password: string }, context: Context) => {

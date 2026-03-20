@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from '@apollo/client/react';
 import { GET_LIST_ITEMS, UPDATE_PRICE, DELETE_ITEM, UPDATE_ALL_FROM_URL, ADD_NEW_MEMBER } from "@/app/api/graphql/operations";
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import type { Item } from '@/types/itemType';
 import { useDebounce } from '@/hooks/useDebouncer';
 
@@ -53,6 +53,9 @@ export function useListItems(listId: number) {
     });
 
     const [addNewMember] = useMutation(ADD_NEW_MEMBER);
+
+
+
 
     const [updateAllPriceFromUrl] = useMutation(UPDATE_ALL_FROM_URL)
 

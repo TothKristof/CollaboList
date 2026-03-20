@@ -21,12 +21,13 @@ async function fetchLoggedInUser(context: Context) {
   }
 }
 
-async function register(email: string, password: string) {
+async function register(email: string, password: string, username: string) {
   try {
     return await prisma.user.create({
       data: {
         email,
         password,
+        username
       },
     });
   } catch (error) {
@@ -49,8 +50,39 @@ async function findUserByEmail(email: string) {
   }
 }
 
+async function findUserByText(searchText: string) {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            email: {
+              contains: searchText ?? "",
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            username: {
+              contains: searchText ?? "",
+              mode: "insensitive" as const,
+            },
+          },
+        ],
+      },
+    });
+
+    if (!users.length) throw new NotFoundError("User");
+
+    return users;
+  } catch (error) {
+    if (error instanceof NotFoundError) throw error;
+    handlePrismaError(error);
+  }
+}
+
 export const userService = {
   fetchLoggedInUser,
   register,
   findUserByEmail,
+  findUserByText
 };
