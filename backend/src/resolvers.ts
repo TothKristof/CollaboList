@@ -10,6 +10,7 @@ import { itemService } from './services/item.service';
 import { listService } from './services/list.service';
 import { Context } from './types/context';
 import { dateScalar } from './utils/dateScalar';
+import { AddItemInput } from './types/graphql';
 
 export const resolvers = {
   Date: dateScalar,
@@ -141,6 +142,17 @@ export const resolvers = {
         listId: result.listId,
         listRole: result.role
       };
+    },
+
+    addItemToList: async (_: unknown, { itemInputs }: { itemInputs: AddItemInput }, context: Context) => {
+      return itemService.addItemToList(
+        context,
+        itemInputs.listId,
+        itemInputs.name,
+        itemInputs.price,
+        itemInputs.link,
+        itemInputs.imgLink
+      )
     }
   },
 };

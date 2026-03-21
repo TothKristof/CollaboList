@@ -109,4 +109,28 @@ export const GET_LIST_MEMBERS = gql`
       role
     }
 }
-`
+`;
+
+export const GET_ITEM_DETAILS_FROM_URL = gql`
+  query GetItemDetailsFromUrl($url: String!) {
+    getItemDetailsFromUrl(url: $url) {
+      imgLink
+      price
+    }
+  }
+`;
+
+export const ADD_ITEM_TO_LIST = gql`
+  mutation AddItemToList($itemInputs: AddItemInput) {
+    addItemToList(itemInputs: $itemInputs) {
+      id
+      name
+      price
+      category
+      link
+      addDate
+      lastUpdatedDate
+    }
+  }
+`;
+

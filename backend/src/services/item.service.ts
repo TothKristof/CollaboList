@@ -73,7 +73,7 @@ async function getItemById(itemId: number, context: Context) {
     });
 
     if (!item) throw new NotFoundError("Item");
-    if(item.ownerId !== context.userId) throw new UnauthorizedError();
+    if (item.ownerId !== context.userId) throw new UnauthorizedError();
 
 
     return item;
@@ -163,6 +163,41 @@ async function updateAllPricesFromUrl(context: Context, listId: number) {
   }
 }
 
+async function addItemToList(
+  context: Context,
+  listId: number,
+  name: string,
+  price: number,
+  link: string,
+  imgLink: string
+) {
+  requireAuth(context);
+  await listService.requireEditPermission(context, listId);
+
+  try {
+    const list = await prisma.list.findUnique({ where: { id: listId } });
+    if (!list) throw new NotFoundError("List");
+
+    const item = await prisma.item.create({
+      data: {
+        name,
+        price,
+        link,
+        imgLink,
+        category: list.category,
+        addDate: new Date(),
+        lastUpdatedDate: new Date(),
+        owner: { connect: { id: context.userId as number } },
+        list: { connect: { id: listId } }
+      }
+    })
+
+    return item;
+  } catch (error) {
+    handlePrismaError(error);
+  }
+}
+
 export const itemService = {
   fetchPriceFromUrl,
   fetchImageFromUrl,
@@ -171,5 +206,6 @@ export const itemService = {
   updatePriceOfItem,
   deleteItem,
   updateAllPricesFromUrl,
-  updatePriceFromUrl
+  updatePriceFromUrl,
+  addItemToList
 };

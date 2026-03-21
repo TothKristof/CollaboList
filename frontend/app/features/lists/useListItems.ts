@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from '@apollo/client/react';
-import { GET_LIST_ITEMS, UPDATE_PRICE, DELETE_ITEM, UPDATE_ALL_FROM_URL, ADD_NEW_MEMBER } from "@/app/api/graphql/operations";
+import { GET_LIST_ITEMS, UPDATE_PRICE, DELETE_ITEM, UPDATE_ALL_FROM_URL, ADD_NEW_MEMBER, ADD_ITEM_TO_LIST } from "@/app/api/graphql/operations";
 import { useState, useEffect } from 'react';
 import type { Item } from '@/types/itemType';
 import { useDebounce } from '@/hooks/useDebouncer';
@@ -54,9 +54,6 @@ export function useListItems(listId: number) {
 
     const [addNewMember] = useMutation(ADD_NEW_MEMBER);
 
-
-
-
     const [updateAllPriceFromUrl] = useMutation(UPDATE_ALL_FROM_URL)
 
     const handleUpdateAllPrices = async () => {
@@ -93,6 +90,8 @@ export function useListItems(listId: number) {
         setPriceDiffMap(diffMap);
     };
 
+    const [addItemToList] = useMutation(ADD_ITEM_TO_LIST);
+
     return {
         loading,
         error,
@@ -110,6 +109,7 @@ export function useListItems(listId: number) {
         skip,
         setSkip,
         totalCount: data?.getListItems.totalCount,
-        addNewMember
+        addNewMember,
+        addItemToList
     };
 }

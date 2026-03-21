@@ -82,6 +82,14 @@ type ItemFetchData{
   imgLink: String
 }
 
+input AddItemInput{
+  name: String!
+  price: Int!
+  listId: Int!
+  imgLink: String
+  link: String!
+}
+
 type Query {
   me: User
   userData: UserDatas
@@ -101,4 +109,5 @@ type Mutation{
     updatePriceFromUrl(itemId: Int!): Item!
     updateAllPricesFromUrl(listId: Int!): [Item!]!
     addNewMemberToList(listUser: ListUserInput!): ListUser!
+    addItemToList(itemInputs: AddItemInput): Item
 }
