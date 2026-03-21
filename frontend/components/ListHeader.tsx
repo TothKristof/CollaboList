@@ -14,7 +14,9 @@ function ListHeader({ listId }: { listId: number }) {
         handleUpdateAllPrices,
         setSearchText,
         searchText,
-        totalCount
+        totalCount,
+        refetchItems,
+        addItemToList
     } =
         useListItems(listId);
 
@@ -68,7 +70,13 @@ function ListHeader({ listId }: { listId: number }) {
                 </Stack>
             </RowWithSpaceBetween>
             <AddMemberModal isVisible={addMemberModalVisibility} setIsVisible={setAddMemberModalVisibilty} listId={listId}></AddMemberModal>
-            <AddItemModal isVisible={addItemModalVisibility} setIsVisible={setAddItemModalVisibilty} listId={listId}></AddItemModal>
+            <AddItemModal
+                isVisible={addItemModalVisibility}
+                setIsVisible={setAddItemModalVisibilty}
+                listId={listId}
+                addItemToList={addItemToList}
+                refetchItems={refetchItems}>
+            </AddItemModal>
         </>
     )
 }
