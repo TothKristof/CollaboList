@@ -58,6 +58,13 @@ export const USER_DATAS = gql`
           category
           name
         }
+        activities {
+          id
+          userId
+          message
+          activityCategory
+          createdAt
+        }
       } 
   }
 `;

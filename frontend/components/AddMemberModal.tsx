@@ -36,7 +36,6 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
         });
         setIsVisible(false);
         refetch();
-        console.log(listId, selectedUserId, selectedRole)
     };
 
     useEffect(() => {
@@ -54,7 +53,6 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
             width={500}
         >
             <RowWithSpaceBetween>
-                {users && console.log(users)}
                 <AutoComplete
                     label="Search user"
                     results={users}
@@ -78,8 +76,8 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
                     placeholder='Select role'
                     onChange={(value) => setSelectedRole(value as AssignableListRole)}
                 >
-                    {ASSIGNABLE_LIST_ROLES.map((listRole, index) => (
-                        <Select.Option key={index} value={listRole}>{listRole}</Select.Option>
+                    {ASSIGNABLE_LIST_ROLES.map((listRole) => (
+                        <Select.Option key={listRole} value={listRole}>{listRole}</Select.Option>
                     ))}
                 </Select>
             </RowWithSpaceBetween>

@@ -41,6 +41,16 @@ enum ListRole {
   GUEST
 }
 
+
+enum ActivityCategory {
+  ADD_ITEM
+  UPDATE_ITEM
+  UPDATE_MULTIPLE_ITEM
+  DELETE_ITEM
+  ADD_MEMBER
+  CREATE_LIST
+}
+
 type AuthPayload {
   token: String!
   user: User!
@@ -49,6 +59,7 @@ type AuthPayload {
 type UserDatas{
   items: [Item]
   lists: [List]
+  activities: [Activity]
 }
 
 type ListWithItems {
@@ -89,6 +100,15 @@ input AddItemInput{
   imgLink: String
   link: String!
 }
+
+type Activity {
+  id: Int!
+  userId: Int!
+  message: String!
+  activityCategory: ActivityCategory!
+  createdAt: Date!
+}
+
 
 type Query {
   me: User

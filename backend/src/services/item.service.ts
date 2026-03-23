@@ -11,6 +11,8 @@ import {
 import { Context } from "../types/context";
 import { requireAuth } from "../utils/auth";
 import { listService } from "./list.service";
+import { activityService } from "./activity.service";
+import { ActivityCategory } from "../generated/prisma";
 
 async function fetchPriceFromUrl(url: string): Promise<number> {
   let html: string;
@@ -73,8 +75,6 @@ async function getItemById(itemId: number, context: Context) {
     });
 
     if (!item) throw new NotFoundError("Item");
-    if (item.ownerId !== context.userId) throw new UnauthorizedError();
-
 
     return item;
   } catch (error) {
@@ -121,8 +121,20 @@ async function deleteItem(context: Context, itemId: number) {
   if (!item) throw new NotFoundError("Item");
   if (item.listId) await listService.requireEditPermission(context, item.listId);
 
+  const user = await prisma.user.findUnique({ where: { id: context.userId as number } });
+  const list = item.listId ? await prisma.list.findUnique({ where: { id: item.listId } }) : null;
+
   try {
-    return await prisma.item.delete({ where: { id: itemId } });
+    const deleted = await prisma.item.delete({ where: { id: itemId } });
+
+    await activityService.addActivityForListMembers(context, item.listId!, ActivityCategory.DELETE_ITEM, {
+      userId: context.userId as number,
+      username: user!.username,
+      itemName: item.name,
+      listName: list?.name
+    });
+
+    return deleted;
   } catch (error) {
     handlePrismaError(error);
   }
@@ -135,12 +147,30 @@ async function updatePriceFromUrl(context: Context, itemId: number) {
   if (!item) throw new NotFoundError("Item");
   if (item.listId) await listService.requireEditPermission(context, item.listId);
 
+  const user = await prisma.user.findUnique({ where: { id: context.userId as number } });
+  const list = item.listId ? await prisma.list.findUnique({ where: { id: item.listId } }) : null;
+
+  const oldPrice = item.price;
   const numericPrice = await fetchPriceFromUrl(item.link);
-  return updatePriceOfItem(itemId, numericPrice);
+  const updated = await updatePriceOfItem(itemId, numericPrice);
+
+  await activityService.addActivityForListMembers(context, item.listId!, ActivityCategory.UPDATE_ITEM, {
+    userId: context.userId as number,
+    username: user!.username,
+    itemName: item.name,
+    listName: list?.name,
+    oldPrice,
+    newPrice: numericPrice
+  });
+
+  return updated;
 }
 
 async function updateAllPricesFromUrl(context: Context, listId: number) {
   await listService.requireEditPermission(context, listId);
+
+  const user = await prisma.user.findUnique({ where: { id: context.userId as number } });
+  const list = await prisma.list.findUnique({ where: { id: listId } });
 
   try {
     const items = await prisma.item.findMany({ where: { listId } });
@@ -154,6 +184,12 @@ async function updateAllPricesFromUrl(context: Context, listId: number) {
         });
       })
     );
+
+    await activityService.addActivityForListMembers(context, listId, ActivityCategory.UPDATE_MULTIPLE_ITEM, {
+      userId: context.userId as number,
+      username: user!.username,
+      listName: list?.name
+    });
 
     return results
       .filter((r): r is PromiseFulfilledResult<Awaited<ReturnType<typeof prisma.item.update>>> => r.status === "fulfilled")
@@ -175,7 +211,11 @@ async function addItemToList(
   await listService.requireEditPermission(context, listId);
 
   try {
-    const list = await prisma.list.findUnique({ where: { id: listId } });
+    const [list, user] = await Promise.all([
+      prisma.list.findUnique({ where: { id: listId } }),
+      prisma.user.findUnique({ where: { id: context.userId as number } })
+    ]);
+
     if (!list) throw new NotFoundError("List");
 
     const item = await prisma.item.create({
@@ -190,7 +230,14 @@ async function addItemToList(
         owner: { connect: { id: context.userId as number } },
         list: { connect: { id: listId } }
       }
-    })
+    });
+
+    await activityService.addActivityForListMembers(context, listId, ActivityCategory.ADD_ITEM, {
+      userId: context.userId as number,
+      username: user!.username,
+      itemName: name,
+      listName: list.name
+    });
 
     return item;
   } catch (error) {

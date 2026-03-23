@@ -25,8 +25,6 @@ type Props = {
 };
 
 function RecentlyAddedItemDiv({ items }: Props) {
-    console.log(items)
-
     return (
         <RecentlyAddedItems>
             <RowWithSpaceBetween>

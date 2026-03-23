@@ -22,7 +22,6 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
     const [editedItemId, setEditedItemId] = useState<number | null>(null);
     const [editedPrice, setEditedPrice] = useState<number>(0);
     const theme = useTheme();
-    console.log(tableData)
 
     const {
         take,
@@ -181,8 +180,10 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
                 defaultPageIndex: skip / take + 1,
 
                 onPaginationChanged: (pagination) => {
-                    const skipCount = (pagination.currentPage - 1) * take
-                    setSkip(skipCount)
+                    setTimeout(() => {
+                        const skipCount = (pagination.currentPage - 1) * take
+                        setSkip(skipCount)
+                    }, 0)
                 },
 
                 totalCount: totalCount,

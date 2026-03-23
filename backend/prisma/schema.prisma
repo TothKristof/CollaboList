@@ -20,8 +20,9 @@ model User {
   password String
   username String
 
-  items     Item[]
-  listUsers ListUser[]
+  items      Item[]
+  listUsers  ListUser[]
+  activities Activity[]
 }
 
 model List {
@@ -29,14 +30,14 @@ model List {
   name     String
   category Category
 
-  listUsers ListUser[]
-  items     Item[]
+  listUsers  ListUser[]
+  items      Item[]
 }
 
 model ListUser {
-  userId Int
-  listId Int
-  role   ListRole @default(GUEST)
+  userId     Int
+  listId     Int
+  role       ListRole   @default(GUEST)
 
   user User @relation(fields: [userId], references: [id])
   list List @relation(fields: [listId], references: [id])
@@ -58,8 +59,18 @@ model Item {
   ownerId Int
   owner   User @relation(fields: [ownerId], references: [id])
 
-  listId Int?
-  list   List? @relation(fields: [listId], references: [id])
+  listId     Int?
+  list       List?      @relation(fields: [listId], references: [id])
+}
+
+model Activity {
+  id               Int              @id @default(autoincrement())
+  userId           Int
+  message          String
+  activityCategory ActivityCategory
+  createdAt        DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 enum ListRole {
@@ -77,4 +88,13 @@ enum Category {
   Style
   Wellness
   Hobbies
+}
+
+enum ActivityCategory {
+  ADD_ITEM
+  UPDATE_ITEM
+  UPDATE_MULTIPLE_ITEM
+  DELETE_ITEM
+  ADD_MEMBER
+  CREATE_LIST
 }

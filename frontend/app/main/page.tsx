@@ -1,8 +1,4 @@
 "use client"
-
-import { useEffect, useMemo } from 'react';
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/authContext";
 import {
   PageWrapper,
   ContentWrapper,
@@ -14,9 +10,10 @@ import { CustomCard } from '../global.styles';
 import ListListingDiv from '@/components/ListListingDiv';
 import PieChartComponent from '@/components/PieChart';
 import { gql } from "@apollo/client";
-import { useQuery } from "@apollo/client/react";
-import { Item } from '@/types/itemType';
 import useHomeInformations from '../features/home/useHomeInformations';
+import RecentActivity from "@/components/RecentActivity";
+import { usePathname } from 'next/navigation'
+import { useEffect } from "react";
 
 const USER_DATAS = gql`
   query GetUserData{
@@ -44,11 +41,15 @@ const USER_DATAS = gql`
 
 
 function page() {
-    const { loading, error, items, lists } =
-      useHomeInformations();
+  const pathname = usePathname()
+  const {items, lists, activities, refetch } =
+    useHomeInformations();
 
-  if (loading) return "Loading...";
-  if (error) return `Error! ${error.message}`;
+  useEffect(() => {
+    if (pathname === '/main') {
+      refetch()
+    }
+  }, [pathname])
 
   return (
     <PageWrapper>
@@ -60,11 +61,12 @@ function page() {
           </MainColumn>
 
           <RightColumn>
-            <CustomCard >
-              <PieChartComponent lists={lists}></PieChartComponent>
+            <CustomCard style={{ flex: 1 }}>
+              <PieChartComponent lists={lists} />
             </CustomCard>
-            <CustomCard />
-            <CustomCard />
+            <CustomCard style={{ flex: 2 }} >
+              <RecentActivity activities={activities}></RecentActivity>
+            </CustomCard>
           </RightColumn>
         </ContentWrapper>
       )}

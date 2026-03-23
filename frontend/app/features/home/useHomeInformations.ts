@@ -10,7 +10,7 @@ export function useHomeInformations() {
     const { isAuthenticated, user } = useAuth();
     const router = useRouter();
 
-    const { loading, error, data } = useQuery(USER_DATAS, {
+    const { loading, error, data, refetch } = useQuery(USER_DATAS, {
         skip: !user
     });
 
@@ -24,7 +24,9 @@ export function useHomeInformations() {
         loading,
         error,
         items: data?.userData.items ?? [],
-        lists: data?.userData?.lists ?? []
+        lists: data?.userData?.lists ?? [],
+        activities: data?.userData?.activities ?? [],
+        refetch
     }
 }
 

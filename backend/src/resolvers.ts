@@ -11,6 +11,8 @@ import { listService } from './services/list.service';
 import { Context } from './types/context';
 import { dateScalar } from './utils/dateScalar';
 import { AddItemInput } from './types/graphql';
+import { activityService } from './services/activity.service';
+import { NotFoundError } from './errors/AppError';
 
 export const resolvers = {
   Date: dateScalar,
@@ -20,12 +22,13 @@ export const resolvers = {
     },
 
     userData: async (_: unknown, __: unknown, context: Context) => {
-      const [lists, items] = await Promise.all([
+      const [lists, items, activities] = await Promise.all([
         listService.getAllListOfUser(context),
         itemService.getUserRecentlyAddedItems(context),
+        activityService.getUserRecentActivities(context)
       ]);
 
-      return { items, lists };
+      return { items, lists, activities };
     },
 
     getListItems: async (_: unknown, args: { id: number; searchText?: string; skip?: number; take?: number }, context: Context) => {
@@ -115,7 +118,27 @@ export const resolvers = {
 
     updatePrice: async (_: unknown, { itemId, newPrice }: { itemId: number; newPrice: number }, context: Context) => {
       requireAuth(context);
-      return itemService.updatePriceOfItem(itemId, newPrice);
+
+      const item = await itemService.getItemById(itemId, context);
+      if (!item) throw new NotFoundError("Item");
+
+      const [list, user] = await Promise.all([
+        item.listId ? prisma.list.findUnique({ where: { id: item.listId } }) : null,
+        prisma.user.findUnique({ where: { id: context.userId as number } })
+      ]);
+
+      const updated = await itemService.updatePriceOfItem(itemId, newPrice);
+
+      await activityService.addActivity(context, ActivityCategory.UPDATE_ITEM, {
+        userId: context.userId as number,
+        username: user!.username,
+        itemName: item.name,
+        listName: list?.name,
+        oldPrice: item.price,
+        newPrice
+      });
+
+      return updated;
     },
 
     deleteItem: async (_: unknown, { itemId }: { itemId: number }, context: Context) => {

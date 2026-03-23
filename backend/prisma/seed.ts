@@ -1,10 +1,21 @@
 import 'dotenv/config'
-import { Category } from "../src/generated/prisma/index.js";
+import { Category, ActivityCategory } from "../src/generated/prisma/index.js";
 import { prisma } from "../src/prismaClient.js"
 import bcrypt from "bcrypt";
 
+async function addSeedActivity(userId: number, category: ActivityCategory, message: string) {
+  await prisma.activity.create({
+    data: {
+      userId,
+      message,
+      activityCategory: category,
+    }
+  })
+}
+
 async function main() {
   await prisma.listUser.deleteMany();
+  await prisma.activity.deleteMany();
   await prisma.item.deleteMany();
   await prisma.list.deleteMany();
   await prisma.user.deleteMany();
@@ -159,6 +170,14 @@ async function main() {
     },
   });
 
+  await addSeedActivity(user1.id, ActivityCategory.CREATE_LIST, 'You created list Gaming setup')
+  await addSeedActivity(user2.id, ActivityCategory.ADD_MEMBER, 'Tom Cruise added a new member to Gaming setup')
+  await addSeedActivity(user1.id, ActivityCategory.ADD_ITEM, 'You added Logitech G305 Lightspeed Wireless Mouse to Gaming setup')
+  await addSeedActivity(user1.id, ActivityCategory.ADD_ITEM, 'You added Keychron B6 Pro to Gaming setup')
+  await addSeedActivity(user1.id, ActivityCategory.ADD_ITEM, 'You added SteelSeries Arctis 7 Wireless Headset to Gaming setup')
+  await addSeedActivity(user1.id, ActivityCategory.UPDATE_ITEM, 'You updated Logitech G305 Lightspeed Wireless Mouse price from 19990 to 17990 HUF in Gaming setup')
+
+
   await prisma.list.create({
     data: {
       name: "Smart home & gadgets",
@@ -171,6 +190,9 @@ async function main() {
       }
     },
   });
+
+  await addSeedActivity(user1.id, ActivityCategory.CREATE_LIST, 'You created list Smart home & gadgets')
+  await addSeedActivity(user1.id, ActivityCategory.ADD_ITEM, 'You added Philips Hue White and Color Ambiance Starter Kit to Smart home & gadgets')
 
   await prisma.list.create({
     data: {
@@ -186,6 +208,11 @@ async function main() {
       }
     },
   });
+
+  await addSeedActivity(user2.id, ActivityCategory.CREATE_LIST, 'You created list Tech upgrades')
+  await addSeedActivity(user2.id, ActivityCategory.ADD_ITEM, 'You added Samsung 970 EVO Plus 2TB NVMe SSD to Tech upgrades')
+  await addSeedActivity(user2.id, ActivityCategory.ADD_ITEM, 'You added Xbox Wireless Controller Series X to Tech upgrades')
+
 
   console.log("🌱 Seed completed successfully");
 }
