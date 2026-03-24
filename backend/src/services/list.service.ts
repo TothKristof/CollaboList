@@ -1,6 +1,6 @@
 import { prisma } from "../prismaClient";
 import { requireAuth } from "../utils/auth";
-import { NotFoundError, UnauthorizedError } from "../errors/AppError";
+import { NotFoundError, UnauthorizedError, ConflictError } from "../errors/AppError";
 import { handlePrismaError } from "../errors/prismaErrorHandler";
 import { Context } from "../types/context";
 import { Category } from "../generated/prisma";
@@ -108,6 +108,19 @@ async function addNewMemberToList(context: Context, userId: number, listId: numb
     prisma.user.findUnique({ where: { id: context.userId as number } }),
     prisma.list.findUnique({ where: { id: listId } })
   ]);
+
+  const existingMember = await prisma.listUser.findUnique({
+    where: { userId_listId: { userId, listId } }
+  });
+
+  if (existingMember) throw new ConflictError("This user is already a member of the list");
+
+  if (listRole === "OWNER") {
+    const existingOwner = await prisma.listUser.findFirst({
+      where: { listId, role: "OWNER" }
+    });
+    if (existingOwner) throw new ConflictError("A list can only have one owner");
+  }
 
   try {
     const result = await prisma.listUser.create({

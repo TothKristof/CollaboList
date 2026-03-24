@@ -42,3 +42,9 @@ export class ParseError extends AppError {
     super(`Failed to parse: ${what}`, "PARSE_ERROR", 422);
   }
 }
+
+export class ConflictError extends AppError {
+  constructor(message: string) {
+    super(message, "CONFLICT", 409);
+  }
+}
