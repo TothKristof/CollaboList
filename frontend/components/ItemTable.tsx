@@ -173,7 +173,6 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
         <Table<Item>
             columns={columns}
             data={tableData}
-            rowKey="id"
             isPaginationEnabled={true}
             pagination={{
                 defaultPageSize: take,

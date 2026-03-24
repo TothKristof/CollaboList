@@ -9,7 +9,8 @@ function useFetchMembers() {
     return {
         fetchUsers,
         members: data?.getListMembers ?? [],
-        refetch
+        refetch,
+        error
     };
 }
 

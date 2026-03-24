@@ -7,6 +7,7 @@ import { useListItems } from '@/app/features/lists/useListItems';
 import useFetchMembers from '@/app/features/lists/fetchMembers';
 import { RowWithSpaceBetween } from '@/app/global.styles'
 import useUserSearch from '@/app/features/lists/userSearch';
+import CustomToaster from "./ErrorToaster";
 
 interface AddNewMemberProps {
     isVisible: boolean,
@@ -18,7 +19,7 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
     const [selectedRole, setSelectedRole] = useState<AssignableListRole>("GUEST")
 
-    const { addNewMember } = useListItems(listId);
+    const { addNewMember, addMemberError } = useListItems(listId);
 
     const { setUserSearchText, users } = useUserSearch()
     const { fetchUsers, members, refetch } = useFetchMembers()
@@ -53,13 +54,14 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
             width={500}
         >
             <RowWithSpaceBetween>
+                {console.log(users)}
                 <AutoComplete
                     label="Search user"
                     results={users}
                     searchIndex={users}
                     placeholder="Search by name or email..."
                     getDisplayName={(user) => user.email}
-                    renderItem={(user: User, isActive) => (
+                    renderItem={(user: User) => (
                         <div key={user.id}>
                             <strong>{user.username}</strong> — {user.email}
                         </div>
@@ -98,6 +100,13 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
                     ))}
                 </div>
             </Stack>
+            {addMemberError &&
+                <CustomToaster
+                    isOpen={addMemberError !== undefined}
+                    text={addMemberError.message}
+                    title='Add member error'
+                    type="error"
+                ></CustomToaster>}
         </Modal>
     )
 }

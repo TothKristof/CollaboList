@@ -14,6 +14,7 @@ import { gql } from "@apollo/client"
 import { useMutation } from "@apollo/client/react"
 import { AnimatePresence, motion } from "motion/react"
 import { useForm, Controller } from "react-hook-form"
+import CustomToaster from '@/components/ErrorToaster'
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
@@ -48,12 +49,21 @@ function Login() {
   const router = useRouter()
   const { login } = useAuth()
   const [isRegister, setIsRegister] = useState(false)
+  const [registerSuccess, setRegisterSuccess] = useState(false)
 
   const [loginForm, setLoginForm] = useState<LoginForm>({ email: '', password: '' })
   const [registerForm, setRegisterForm] = useState<RegisterForm>({ email: '', password: '', username: '' })
 
   const [onLogin, { data, error: loginError }] = useMutation(LOGIN)
-  const [onRegister, { data: registerData, error: registerError }] = useMutation(REGISTER)
+  const [onRegister, { data: registerData, error: registerError }] = useMutation(REGISTER, {
+    onCompleted: () => {
+      setRegisterSuccess(true)
+      setTimeout(() => {
+        setRegisterSuccess(false)
+        setIsRegister(false)
+      }, 3000)
+    }
+  })
 
   const { handleSubmit, control, formState: { errors } } = useForm<RegisterForm>({
     defaultValues: { email: '', password: '', username: '' },
@@ -118,13 +128,12 @@ function Login() {
               <Button type='secondary' style={{ marginTop: '100px' }} onClick={() => setIsRegister(true)}>
                 No account? Register
               </Button>
-              <Toaster
-                closeButtonAriaLabel='close'
-                title='Login Error'
-                type='error'
+              {loginError && <CustomToaster
                 isOpen={loginError !== undefined}
                 text={loginError?.message}
-              />
+                title='Login Error'
+                type='error'
+              ></CustomToaster>}
             </motion.div>
           ) : (
             <motion.div
@@ -203,16 +212,21 @@ function Login() {
               <Button type='secondary' style={{ marginTop: '100px' }} onClick={() => setIsRegister(false)}>
                 Already have an account? Login
               </Button>
-              <Toaster
-                closeButtonAriaLabel='close'
-                title='Register Error'
-                type='error'
+              {registerError && <CustomToaster
                 isOpen={registerError !== undefined}
                 text={registerError?.message}
-              />
+                title='Registration Error'
+                type='error'
+              ></CustomToaster>}
             </motion.div>
           )}
         </AnimatePresence>
+        {registerSuccess && <CustomToaster
+          isOpen={registerSuccess}
+          title='Registration successful'
+          text='Your account has been created, please log in.'
+          type='success'
+        ></CustomToaster>}
       </FormWrapper>
     </HorizontalAlignment >
   )

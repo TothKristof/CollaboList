@@ -54,7 +54,7 @@ const [updatePrice] = useMutation(UPDATE_PRICE, {
         }
     });
 
-    const [addNewMember] = useMutation(ADD_NEW_MEMBER);
+    const [addNewMember, {error: addMemberError}] = useMutation(ADD_NEW_MEMBER);
 
     const [updateAllPriceFromUrl] = useMutation(UPDATE_ALL_FROM_URL)
 
@@ -112,6 +112,7 @@ const [updatePrice] = useMutation(UPDATE_PRICE, {
         setSkip,
         totalCount: data?.getListItems.totalCount,
         addNewMember,
-        addItemToList
+        addItemToList,
+        addMemberError
     };
 }
