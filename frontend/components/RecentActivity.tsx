@@ -3,6 +3,7 @@ import { Activity } from "@/types/activityType";
 import { activityCategories } from "@/data/activities";
 import { Icon } from "lucide-react";
 import { space } from "@kinsta/stratus";
+import NoData from "./NoData";
 
 const DivWrapper = styled.div((props) => ({
     width: '100%',
@@ -48,6 +49,9 @@ function RecentActivity({ activities }: { activities: Activity[] }) {
         <DivWrapper>
             <div>Recent activites</div>
             <ActivitiesWrapperDiv>
+                {activities.length == 0 && (
+                    <NoData></NoData>
+                )}
                 {activities.map((activity, index) => {
                     const category = activityCategories[activity.activityCategory]
                     const Icon = category.icon

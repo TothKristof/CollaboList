@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { List } from '@/types/listType';
 import { gql } from "@apollo/client";
 import { useQuery, useMutation } from "@apollo/client/react";
+import NoData from './NoData';
 
 const ListsDiv = styled.div<{ scrollable: boolean }>((props) => ({
     display: 'flex',
@@ -94,9 +95,7 @@ function ListListingDiv({ lists }: ListsDivProps) {
                     <Plus size={48} />
                 </ListDiv>
                 {!hasLists && (
-                    <EmptyState>
-                        You don’t have any lists yet.
-                    </EmptyState>
+                    <NoData></NoData>
                 )}
 
                 {hasLists && (

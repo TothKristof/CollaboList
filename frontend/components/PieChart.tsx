@@ -5,6 +5,7 @@ import { lists } from '@/data/lists';
 import { CategoryKey } from '@/data/categories';
 import styled from "@emotion/styled";
 import { useAuth } from '@/context/authContext';
+import NoData from './NoData';
 
 interface PieChartProps {
   lists: {
@@ -69,7 +70,7 @@ function PieChartComponent({ lists }: PieChartProps) {
           </PieChart>
         </ResponsiveContainer>
       ) : (
-        <div>This user doesn't own any list</div>
+        <NoData></NoData>
       )}
     </>
   );

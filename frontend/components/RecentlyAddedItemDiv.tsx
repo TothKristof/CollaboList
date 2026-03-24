@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import { RowWithSpaceBetween } from '@/app/global.styles'
 import { Heading, space } from '@kinsta/stratus';
 import { Item } from '@/types/itemType';
-import ItemTable from './ItemTable';
 import ItemCard from "./ItemCard";
+import NoData from "./NoData";
 
 const ItemGridContainer = styled("div")({
   display: "grid",
@@ -31,7 +31,7 @@ function RecentlyAddedItemDiv({ items }: Props) {
                 <Heading size='l'>Recently Added Items</Heading>
             </RowWithSpaceBetween>
             <ItemGridContainer>
-                {/* <ItemTable tableData={sortedItems}></ItemTable> */}
+                {items.length == 0 && <NoData></NoData>}
                 {items.map((item, index) => (
                     <ItemCard item={item} key={index}></ItemCard>
                 ))}
