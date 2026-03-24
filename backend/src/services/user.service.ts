@@ -3,6 +3,7 @@ import { requireAuth } from "../utils/auth";
 import { NotFoundError } from "../errors/AppError";
 import { handlePrismaError } from "../errors/prismaErrorHandler";
 import { Context } from "../types/context";
+import bcrypt from "bcrypt";
 
 async function fetchLoggedInUser(context: Context) {
   requireAuth(context);
@@ -23,10 +24,11 @@ async function fetchLoggedInUser(context: Context) {
 
 async function register(email: string, password: string, username: string) {
   try {
+    const hashedPassword = await bcrypt.hash(password, 10)
     return await prisma.user.create({
       data: {
         email,
-        password,
+        password: hashedPassword,
         username
       },
     });

@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { prisma } from "./prismaClient"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Category, ListRole } from "./generated/prisma";
+import { Category} from "./generated/prisma";
 import { requireAuth } from './utils/auth';
 import { ValidationError } from './errors/AppError';
 import { userService } from './services/user.service';
@@ -13,6 +13,7 @@ import { dateScalar } from './utils/dateScalar';
 import { AddItemInput } from './types/graphql';
 import { activityService } from './services/activity.service';
 import { NotFoundError } from './errors/AppError';
+import { ActivityCategory } from './generated/prisma';
 
 export const resolvers = {
   Date: dateScalar,
