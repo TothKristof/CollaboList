@@ -14,6 +14,7 @@ import useHomeInformations from '../features/home/useHomeInformations';
 import RecentActivity from "@/components/RecentActivity";
 import { usePathname } from 'next/navigation'
 import { useEffect } from "react";
+import Loading from "@/components/Loading";
 
 const USER_DATAS = gql`
   query GetUserData{
@@ -42,7 +43,7 @@ const USER_DATAS = gql`
 
 function page() {
   const pathname = usePathname()
-  const {items, lists, activities, refetch } =
+  const {items, lists, activities, refetch, loading } =
     useHomeInformations();
 
   useEffect(() => {
@@ -50,6 +51,10 @@ function page() {
       refetch()
     }
   }, [pathname])
+
+  if(loading){
+    return <Loading></Loading>
+  }
 
   return (
     <PageWrapper>

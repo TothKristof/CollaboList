@@ -44,7 +44,7 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
                 const Icon = categories[categoryKey].icon;
                 const color = categories[categoryKey].color;
                 return (
-                    <Tooltip content={`${categoryKey} category`}>
+                    <Tooltip key={row.id} content={`${categoryKey} category`}>
                         <div
                             style={{
                                 display: "flex",
@@ -86,7 +86,7 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
                 const diff = priceDiffMap?.[item.id];
                 if (editedItemId == item.id) {
                     return (
-                        <Stack direction='row' >
+                        <Stack key={row.id} direction='row' >
                             <input
                                 type="number"
                                 value={editedPrice}
@@ -122,7 +122,7 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
                 }
 
                 return (
-                    <div
+                    <div key={row.id}
                         style={{
                             display: "flex",
                             gap: 8,
@@ -173,6 +173,7 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
         <Table<Item>
             columns={columns}
             data={tableData}
+            rowKey='id'
             isPaginationEnabled={true}
             pagination={{
                 defaultPageSize: take,
