@@ -100,7 +100,7 @@ export default function Navbar() {
                 )}
 
                 {isAuthenticated && !isLanding && (
-                    <UserMenu email={user?.email} />
+                    <UserMenu username={user?.username} />
                 )}
             </Stack>
         </RowWithSpaceBetween>

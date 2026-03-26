@@ -19,7 +19,7 @@ const LogoutButton = styled(Button)({
     gap: space[250]
 })
 
-export function UserMenu({ email }: { email: string }) {
+export function UserMenu({ username }: { username: string }) {
     const { logout } = useAuth();
     const [open, setOpen] = useState(false);
 
@@ -28,7 +28,7 @@ export function UserMenu({ email }: { email: string }) {
             
             <AvatarSegment onClick={() => setOpen(!open)} style={{ cursor: "pointer" }}>
                 <Stack direction="row">
-                    <div>{email}</div>
+                    <div>{username}</div>
                     <Avatar />
                 </Stack>
                 {open && (

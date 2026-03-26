@@ -7,6 +7,7 @@ import { useApolloClient } from "@apollo/client/react";
 type AuthUser = {
   id: number;
   email: string;
+  username: string;
 };
 
 type AuthContextType = {
@@ -38,6 +39,7 @@ const fetchMe = async () => {
             me {
               id
               email
+              username
             }
           }
         `,
