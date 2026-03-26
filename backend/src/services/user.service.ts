@@ -82,9 +82,30 @@ async function findUserByText(searchText: string) {
   }
 }
 
+async function getRoleInList(listId: number, userId: number) {
+  try {
+    const listUser = await prisma.listUser.findUnique({
+      where: {
+        userId_listId: {
+          listId: listId,
+          userId: userId
+        }
+      },
+    });
+
+    if (!listUser) throw new NotFoundError("User");
+
+    return listUser.role;
+  } catch (error) {
+    if (error instanceof NotFoundError) throw error;
+    handlePrismaError(error);
+  }
+}
+
 export const userService = {
   fetchLoggedInUser,
   register,
   findUserByEmail,
-  findUserByText
+  findUserByText,
+  getRoleInList
 };

@@ -67,6 +67,7 @@ type ListWithItems {
   name: String!
   items: [Item!]!
   totalCount: Int!
+  listrole: ListRole!
 }
 
 input ListUserInput {

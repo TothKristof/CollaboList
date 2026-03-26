@@ -53,11 +53,14 @@ export const resolvers = {
         prisma.item.count({ where: whereFilter }),
       ]);
 
+      const listrole = await userService.getRoleInList(list.id, context.userId)
+
       return {
         id: list!.id,
         name: list!.name,
         items,
         totalCount,
+        listrole
       };
     },
 
