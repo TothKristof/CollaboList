@@ -23,6 +23,7 @@ model User {
   items      Item[]
   listUsers  ListUser[]
   activities Activity[]
+  invitations Invitation[]
 }
 
 model List {
@@ -30,14 +31,15 @@ model List {
   name     String
   category Category
 
-  listUsers  ListUser[]
-  items      Item[]
+  listUsers   ListUser[]
+  items       Item[]
+  invitations Invitation[]
 }
 
 model ListUser {
-  userId     Int
-  listId     Int
-  role       ListRole   @default(GUEST)
+  userId Int
+  listId Int
+  role   ListRole @default(GUEST)
 
   user User @relation(fields: [userId], references: [id])
   list List @relation(fields: [listId], references: [id])
@@ -59,8 +61,8 @@ model Item {
   ownerId Int
   owner   User @relation(fields: [ownerId], references: [id])
 
-  listId     Int?
-  list       List?      @relation(fields: [listId], references: [id])
+  listId Int?
+  list   List? @relation(fields: [listId], references: [id])
 }
 
 model Activity {
@@ -71,6 +73,20 @@ model Activity {
   createdAt        DateTime         @default(now())
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model Invitation {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique @default(uuid())
+  listId    Int
+  role      ListRole
+  createdBy Int
+  expiresAt DateTime
+  maxUses   Int      @default(1)
+  useCount  Int      @default(0)
+
+  list    List @relation(fields: [listId], references: [id])
+  creator User @relation(fields: [createdBy], references: [id])
 }
 
 enum ListRole {

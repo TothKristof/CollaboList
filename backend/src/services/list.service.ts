@@ -7,6 +7,7 @@ import { Category } from "../generated/prisma";
 import { ListRole } from "../generated/prisma";
 import { activityService } from "./activity.service";
 import { ActivityCategory } from "../generated/prisma";
+import { invitationService } from "./invitation.service";
 
 async function getUserRoleInList(userId: number, listId: number) {
   const listUser = await prisma.listUser.findUnique({
@@ -15,7 +16,7 @@ async function getUserRoleInList(userId: number, listId: number) {
   return listUser?.role ?? null;
 }
 
-async function requireEditPermission(context: Context, listId: number) {
+async function requirePermission(context: Context, listId: number) {
   requireAuth(context);
   const role = await getUserRoleInList(context.userId!, listId);
   if (!role || role === "GUEST") throw new UnauthorizedError();
@@ -102,7 +103,7 @@ async function addNewList(context: Context, name: string, category: Category) {
 }
 
 async function addNewMemberToList(context: Context, userId: number, listId: number, listRole: ListRole) {
-  await requireEditPermission(context, listId);
+  await requirePermission(context, listId);
 
   const [user, list] = await Promise.all([
     prisma.user.findUnique({ where: { id: context.userId as number } }),
@@ -150,14 +151,22 @@ async function getListMembers(listId: number) {
   }
 }
 
-
+async function createInvitation(context: Context, listId: number, role: ListRole) {
+  await requirePermission(context, listId);
+  try {
+    return invitationService.createInvitation(listId, role, context.userId)
+  } catch (error) {
+    handlePrismaError(error);
+  }
+}
 
 export const listService = {
   getAllListOfUser,
   getListById,
   addNewList,
   getUserRoleInList,
-  requireEditPermission,
+  requireEditPermission: requirePermission,
   addNewMemberToList,
-  getListMembers
+  getListMembers,
+  createInvitation
 };

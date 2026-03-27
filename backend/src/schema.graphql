@@ -76,6 +76,14 @@ input ListUserInput {
   listRole: ListRole!
 }
 
+type Invitation {
+  id: ID!
+  token: String!
+  role: ListRole!
+  expiresAt: String!
+  list: List!
+}
+
 type ListUser{
   userId: Int!
   listId: Int!
@@ -131,4 +139,5 @@ type Mutation{
     updateAllPricesFromUrl(listId: Int!): [Item!]!
     addNewMemberToList(listUser: ListUserInput!): ListUser!
     addItemToList(itemInputs: AddItemInput): Item
+    createInvitation(listId: Int!, role: ListRole!): Invitation!
 }

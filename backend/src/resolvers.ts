@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { prisma } from "./prismaClient"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Category} from "./generated/prisma";
+import { Category } from "./generated/prisma";
 import { requireAuth } from './utils/auth';
 import { ValidationError } from './errors/AppError';
 import { userService } from './services/user.service';
@@ -180,6 +180,10 @@ export const resolvers = {
         itemInputs.link,
         itemInputs.imgLink
       )
+    },
+
+    createInvitation: async (_, { listId, role }, context: Context) => {
+      return listService.createInvitation(context, listId, role);
     }
   },
 };
