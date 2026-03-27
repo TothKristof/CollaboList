@@ -7,7 +7,7 @@ import AddMemberModal from './AddMemberModal';
 import AddItemModal from './AddItemModal';
 
 function ListHeader({ listId }: { listId: number }) {
-    const [addMemberModalVisibility, setAddMemberModalVisibilty] = useState(false)
+    const [addMemberModalVisibility, setAddMemberModalVisibilty] = useState(true)
     const [addItemModalVisibility, setAddItemModalVisibilty] = useState(false)
     const {
         listName,
@@ -16,7 +16,8 @@ function ListHeader({ listId }: { listId: number }) {
         searchText,
         totalCount,
         refetchItems,
-        addItemToList
+        addItemToList,
+        role
     } =
         useListItems(listId);
 
@@ -47,7 +48,7 @@ function ListHeader({ listId }: { listId: number }) {
                         }}
                     />
                 </div>
-                <Stack
+                {role != "GUEST" && <Stack
                     direction='row'
                     gap={300}
                 >
@@ -67,7 +68,7 @@ function ListHeader({ listId }: { listId: number }) {
                     <Tooltip content="Add item">
                         <CirclePlus style={{ cursor: "pointer" }} onClick={() => setAddItemModalVisibilty(true)} size={30}></CirclePlus>
                     </Tooltip>
-                </Stack>
+                </Stack>}
             </RowWithSpaceBetween>
             <AddMemberModal isVisible={addMemberModalVisibility} setIsVisible={setAddMemberModalVisibilty} listId={listId}></AddMemberModal>
             <AddItemModal

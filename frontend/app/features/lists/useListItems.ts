@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useApolloClient } from '@apollo/client/react';
 import { GET_LIST_ITEMS, UPDATE_PRICE, DELETE_ITEM, UPDATE_ALL_FROM_URL, ADD_NEW_MEMBER, ADD_ITEM_TO_LIST } from "@/app/api/graphql/operations";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { Item } from '@/types/itemType';
 import { useDebounce } from '@/hooks/useDebouncer';
 
@@ -11,6 +11,7 @@ export function useListItems(listId: number) {
     const [take, setTake] = useState(4)
     const [skip, setSkip] = useState(0)
     const debouncedSearch = useDebounce(searchText, 300);
+    const cachedRole = useRef<string | null>(null);
 
     const { loading, error, data, refetch } = useQuery(
         GET_LIST_ITEMS,
@@ -34,19 +35,22 @@ export function useListItems(listId: number) {
         })
     }, [debouncedSearch, take, skip])
 
-const [updatePrice] = useMutation(UPDATE_PRICE, {
-    onCompleted: (data) => {
-        const updatedItem = data.updatePrice;
-        
-        client.cache.modify({
-            id: client.cache.identify({ __typename: 'Item', id: updatedItem.id }),
-            fields: {
-                price: () => updatedItem.price,
-                lastUpdatedDate: () => updatedItem.lastUpdatedDate
-            }
-        });
-    }
-});
+    const freshRole = data?.getListItems.listrole;
+    if (freshRole) cachedRole.current = freshRole;  // ← csak felülírja ha van értéke
+
+    const [updatePrice] = useMutation(UPDATE_PRICE, {
+        onCompleted: (data) => {
+            const updatedItem = data.updatePrice;
+            
+            client.cache.modify({
+                id: client.cache.identify({ __typename: 'Item', id: updatedItem.id }),
+                fields: {
+                    price: () => updatedItem.price,
+                    lastUpdatedDate: () => updatedItem.lastUpdatedDate
+                }
+            });
+        }
+    });
 
     const [deleteItem] = useMutation(DELETE_ITEM, {
         onCompleted: () => {
@@ -113,6 +117,7 @@ const [updatePrice] = useMutation(UPDATE_PRICE, {
         totalCount: data?.getListItems.totalCount,
         addNewMember,
         addItemToList,
-        addMemberError
+        addMemberError,
+        role: cachedRole.current,
     };
 }

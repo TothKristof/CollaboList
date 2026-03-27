@@ -28,7 +28,8 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
         setTake,
         skip,
         setSkip,
-        totalCount
+        totalCount,
+        role
     } =
         useListItems(listId);
 
@@ -116,8 +117,8 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
             header: "",
             cell: ({ row }) => {
                 const item = row.original;
-
-                if (!actions) {
+                console.log(role)
+                if (!actions || role == "GUEST") {
                     return null;
                 }
 
@@ -167,7 +168,7 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
             },
         },
 
-    ], [editedItemId, editedPrice, priceDiffMap, actions, theme]);
+    ], [editedItemId, editedPrice, priceDiffMap, actions, theme, role]);
 
     return (
         <Table<Item>

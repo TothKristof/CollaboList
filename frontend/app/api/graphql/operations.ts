@@ -6,6 +6,7 @@ query getListItems($getListItemsId: Int!, $searchText: String, $take: Int, $skip
     id
     name
     totalCount
+    listrole
     items {
       addDate
       category
