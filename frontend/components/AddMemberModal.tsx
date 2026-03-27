@@ -1,4 +1,4 @@
-import { Modal, Select, Tag, Avatar, AutoComplete, Stack, space } from "@kinsta/stratus";
+import { Modal, Select, Tag, Avatar, CopyBox, Stack, Button } from "@kinsta/stratus";
 import type { User } from "@/types/userType";
 import { useEffect, useState } from "react";
 import { ASSIGNABLE_LIST_ROLES } from '@/data/listRoles';
@@ -34,8 +34,9 @@ interface AddNewMemberProps {
 function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) {
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
     const [selectedRole, setSelectedRole] = useState<AssignableListRole>("GUEST")
+    const [link, setLink] = useState<string | null>(null);
 
-    const { addNewMember, addMemberError } = useListItems(listId);
+    const { addNewMember, addMemberError, createInvitation } = useListItems(listId);
 
     const { fetchUsers, members, refetch } = useFetchMembers()
 
@@ -52,32 +53,22 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
         },
     ];
 
-    const handleAddMember = async () => {
-        if (!selectedUserId || !selectedRole) return;
-        await addNewMember({
-            variables: {
-                listUser: {
-                    listId,
-                    userId: selectedUserId,
-                    listRole: selectedRole
-                }
-            }
-        });
-        setIsVisible(false);
-        refetch();
-    };
-
     useEffect(() => {
         fetchUsers({ variables: { listId } });
     }, [isVisible])
+
+    const handleGenerateLink = async () => {
+        const { data } = await createInvitation({
+            variables: { listId, role: selectedRole }
+        });
+        setLink(`${window.location.origin}/invite/accept?token=${data.createInvitation.token}`);
+    };
 
     return (
         <Modal
             isVisible={isVisible}
             title="Add new member"
             isClosable
-            onOk={handleAddMember}
-            okText="Add"
             onCancel={() => setIsVisible(false)}
             width={500}
         >
@@ -86,7 +77,10 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
                     {roles.map(({ value, label, icon }) => (
                         <RoleButton
                             key={value}
-                            onClick={() => setSelectedRole(value)}
+                            onClick={() => {
+                                setSelectedRole(value);
+                                setLink(null);
+                            }}
                             style={{
                                 border: selectedRole === value ? '1px solid #3b82f6' : '1px solid #e2e8f0',
                                 background: selectedRole === value ? '#eff6ff' : '#f8fafc',
@@ -99,6 +93,17 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
                     ))}
                 </Stack>
             </RowWithSpaceBetween>
+            <RowWithSpaceBetween >
+                <Button onClick={handleGenerateLink} style={{ margin: 'auto' }}>Generate Link</Button>
+            </RowWithSpaceBetween>
+            <CopyBox
+                isReadOnly
+                label="Invitation link"
+                onCopy={function noRefCheck() { }}
+                text={link ? link : ''}
+                isDisabled={!link}
+            // type="text"
+            />
             <Stack direction='column' gap={0}>
                 <h5>Members</h5>
                 <div className='scrollable'>

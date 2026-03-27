@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useApolloClient } from '@apollo/client/react';
-import { GET_LIST_ITEMS, UPDATE_PRICE, DELETE_ITEM, UPDATE_ALL_FROM_URL, ADD_NEW_MEMBER, ADD_ITEM_TO_LIST } from "@/app/api/graphql/operations";
+import { GET_LIST_ITEMS, UPDATE_PRICE, DELETE_ITEM, UPDATE_ALL_FROM_URL, ADD_NEW_MEMBER, ADD_ITEM_TO_LIST, CREATE_INVITATION } from "@/app/api/graphql/operations";
 import { useState, useEffect, useRef } from 'react';
 import type { Item } from '@/types/itemType';
 import { useDebounce } from '@/hooks/useDebouncer';
@@ -62,6 +62,8 @@ export function useListItems(listId: number) {
 
     const [updateAllPriceFromUrl] = useMutation(UPDATE_ALL_FROM_URL)
 
+    const [createInvitation] = useMutation(CREATE_INVITATION);
+
     const handleUpdateAllPrices = async () => {
         const currentItems = data?.getListItems.items ?? [];
 
@@ -119,5 +121,6 @@ export function useListItems(listId: number) {
         addItemToList,
         addMemberError,
         role: cachedRole.current,
+        createInvitation
     };
 }

@@ -142,3 +142,11 @@ export const ADD_ITEM_TO_LIST = gql`
   }
 `;
 
+export const CREATE_INVITATION = gql`
+mutation CreateInvitation($listId: Int!, $role: ListRole!) {
+  createInvitation(listId: $listId, role: $role) {
+    token
+  }
+}
+`;
+

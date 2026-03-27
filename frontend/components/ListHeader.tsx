@@ -7,7 +7,7 @@ import AddMemberModal from './AddMemberModal';
 import AddItemModal from './AddItemModal';
 
 function ListHeader({ listId }: { listId: number }) {
-    const [addMemberModalVisibility, setAddMemberModalVisibilty] = useState(true)
+    const [addMemberModalVisibility, setAddMemberModalVisibilty] = useState(false)
     const [addItemModalVisibility, setAddItemModalVisibilty] = useState(false)
     const {
         listName,
