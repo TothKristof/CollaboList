@@ -14,6 +14,7 @@ import { AddItemInput } from './types/graphql';
 import { activityService } from './services/activity.service';
 import { NotFoundError } from './errors/AppError';
 import { ActivityCategory } from './generated/prisma';
+import { invitationService } from './services/invitation.service';
 
 export const resolvers = {
   Date: dateScalar,
@@ -80,6 +81,10 @@ export const resolvers = {
         price,
         imgLink
       }
+    },
+
+    getItemById: async (_, { itemId }, context: Context) => {
+      return itemService.getItemById(itemId, context)
     }
   },
 
@@ -184,6 +189,26 @@ export const resolvers = {
 
     createInvitation: async (_, { listId, role }, context: Context) => {
       return listService.createInvitation(context, listId, role);
+    },
+
+    acceptInvitation: async (_, { token }, { userId }) => {
+      const invitation = await invitationService.findInvitationByToken(token);
+      const existing = await prisma.listUser.findFirst({
+        where: { listId: invitation.listId, userId }
+      });
+      if (existing) throw new Error('Already a member');
+
+      const [member] = await prisma.$transaction([
+        prisma.listUser.create({
+          data: { listId: invitation.listId, userId, role: invitation.role }
+        }),
+        prisma.invitation.update({
+          where: { token },
+          data: { useCount: { increment: 1 } }
+        })
+      ]);
+
+      return member;
     }
   },
 };

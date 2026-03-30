@@ -143,10 +143,50 @@ export const ADD_ITEM_TO_LIST = gql`
 `;
 
 export const CREATE_INVITATION = gql`
-mutation CreateInvitation($listId: Int!, $role: ListRole!) {
-  createInvitation(listId: $listId, role: $role) {
-    token
+  mutation CreateInvitation($listId: Int!, $role: ListRole!) {
+    createInvitation(listId: $listId, role: $role) {
+      token
+    }
   }
-}
 `;
+
+export const ACCEPT_INVITATION = gql`
+    mutation AcceptInvitation($token: String!) {
+      acceptInvitation(token: $token) {
+        id
+        email
+        username
+      }
+    }
+`;
+
+export const ADD_LIST = gql`
+  mutation AddList($name: String!, $category: Category!) {
+    addList(name: $name, category: $category) {
+      id
+      name
+      category
+      items {
+        id
+      }
+    }
+  }
+`;
+
+export const GET_ITEM_BY_ID = gql`
+  query GetItemById($itemId: Int!) {
+    getItemById(itemId: $itemId) {
+      id
+      name
+      price
+      category
+      link
+      addDate
+      lastUpdatedDate
+      imgLink
+    }
+  }
+`;
+
+
 
