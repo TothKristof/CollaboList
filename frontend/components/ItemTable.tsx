@@ -6,6 +6,7 @@ import { Check, Edit, Globe, Trash } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { css, useTheme } from '@emotion/react';
 import { useListItems } from '@/app/features/lists/useListItems';
+import { useRouter } from 'next/navigation';
 
 interface TableProps {
     tableData: Item[];
@@ -22,6 +23,7 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
     const [editedItemId, setEditedItemId] = useState<number | null>(null);
     const [editedPrice, setEditedPrice] = useState<number>(0);
     const theme = useTheme();
+    const router = useRouter();
 
     const {
         take,
@@ -175,6 +177,7 @@ function ItemTable({ tableData, listId, actions, priceDiffMap }: TableProps) {
             columns={columns}
             data={tableData}
             rowKey='id'
+            onRowClick={(item) => router.push(`/items/${item.id}`)}
             isPaginationEnabled={true}
             pagination={{
                 defaultPageSize: take,

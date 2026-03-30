@@ -21,7 +21,8 @@ type Item {
   link: String!
   addDate: Date!
   lastUpdatedDate: Date!
-  list: List
+  list: List,
+  imgLink: String
 }
 
 enum Category {
@@ -126,6 +127,7 @@ type Query {
   searchUsers(searchText: String!): [User]
   getListMembers(listId: Int!): [ListMember]
   getItemDetailsFromUrl(url: String!): ItemFetchData
+  getItemById(itemId: Int!): Item!
 }
 
 type Mutation{
@@ -140,4 +142,5 @@ type Mutation{
     addNewMemberToList(listUser: ListUserInput!): ListUser!
     addItemToList(itemInputs: AddItemInput): Item
     createInvitation(listId: Int!, role: ListRole!): Invitation!
+    acceptInvitation(token: String!): ListUser
 }

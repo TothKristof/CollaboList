@@ -1,4 +1,4 @@
-import { Modal, Input, AutoComplete, Button } from '@kinsta/stratus'
+import { Modal, Input, AutoComplete, Button, Stack, ActionBox } from '@kinsta/stratus'
 import styled from "@emotion/styled";
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
@@ -8,6 +8,7 @@ import { List } from '@/types/listType';
 import { gql } from "@apollo/client";
 import { useQuery, useMutation } from "@apollo/client/react";
 import NoData from './NoData';
+import useListAdd from '@/app/features/lists/useListAdd';
 
 const ListsDiv = styled.div<{ scrollable: boolean }>((props) => ({
     display: 'flex',
@@ -58,32 +59,36 @@ const ListLink = styled(Link)({
     textDecoration: 'none',
 });
 
+const Divider = styled.div({
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    width: 300,
+    margin: 'auto',
+    '&::before, &::after': {
+        content: '""',
+        flex: 1,
+        height: 1,
+        background: '#e2e8f0',
+    }
+});
+
+const InvitationWrapper = styled.div({
+    width: 300,
+    margin: 'auto',
+});
+
 interface ListsDivProps {
     lists: List[]
 }
-
-const ADD_LIST = gql`
-  mutation AddList($name: String!, $category: Category!) {
-    addList(name: $name, category: $category) {
-      id
-      name
-      category
-      items {
-        id
-      }
-    }
-  }
-`;
-
 
 function ListListingDiv({ lists }: ListsDivProps) {
     const [isVisible, setIsVisible] = useState(false)
     const categoryList = Object.keys(categories)
     const [newListName, setNewListName] = useState("")
     const [newListCategory, setNewListCategory] = useState("")
-    const [addList] = useMutation(ADD_LIST, {
-        refetchQueries: ["GetUserData"],
-    });
+    const [invitationLink, setInvitationLink] = useState("")
+    const { addList, acceptInvitation } = useListAdd()
 
     const hasLists = lists.length > 0
     const isScrollable = lists.length > 5
@@ -127,30 +132,66 @@ function ListListingDiv({ lists }: ListsDivProps) {
                 isClosable
                 onOk={async () => {
                     setIsVisible(false)
-                    await addList({
-                        variables: {
-                            name: newListName,
-                            category: newListCategory,
-                        },
-                    });
+                    if (invitationLink) {
+                        await acceptInvitation({
+                            variables: {
+                                token: invitationLink
+                            }
+                        })
+                    } else {
+                        await addList({
+                            variables: {
+                                name: newListName,
+                                category: newListCategory,
+                            },
+                        });
+                    }
                 }}
                 okText="Add new list"
                 onCancel={() => setIsVisible(false)}
             >
-                <FormDiv>
-                    <Input
-                        label="List name"
-                        placeholder="Type something"
-                        onChange={(e) => setNewListName(e.target.value)}
-                    />
-                    <AutoComplete
-                        label="List items category (optional)"
-                        searchIndex={categoryList}
-                        onChange={(e) => {
-                            setNewListCategory(e)
-                        }}
-                    />
-                </FormDiv>
+                <Stack gap={150}>
+                    <FormDiv>
+                        <Input
+                            label="List name"
+                            placeholder="Type something"
+                            value={newListName}
+                            onChange={(e) => {
+                                setInvitationLink("")
+                                setNewListName(e.target.value)
+                            }}
+                        />
+                        <AutoComplete
+                            label="List items category (optional)"
+                            searchIndex={categoryList}
+                            value={newListCategory}
+                            onChange={(e) => {
+                                setInvitationLink("")
+                                setNewListCategory(e)
+                            }}
+                        />
+                    </FormDiv>
+
+                    <Divider>Or</Divider>
+
+                    <InvitationWrapper>
+                        <ActionBox
+                            action={{
+                                icon: 'File',
+                                tooltip: 'Paste invitation link',
+                                onClick: async () => {
+                                    setNewListName("")
+                                    setNewListCategory("")
+                                    const text = await navigator.clipboard.readText();
+                                    setInvitationLink(text);
+                                }
+                            }}
+                            label="Invitation link"
+                            text={invitationLink}
+                            tooltip="Paste invitation link"
+                        />
+                    </InvitationWrapper>
+                </Stack>
             </Modal>
         </>
     )
