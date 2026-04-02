@@ -7,7 +7,7 @@ import { useListItems } from '@/app/features/lists/useListItems';
 import useFetchMembers from '@/app/features/lists/fetchMembers';
 import { RowWithSpaceBetween } from '@/app/global.styles'
 import useUserSearch from '@/app/features/lists/userSearch';
-import CustomToaster from "./ErrorToaster";
+import CustomToaster from "./CustomToaster";
 import { User as UserIcon, Users } from "lucide-react";
 import styled from "@emotion/styled";
 

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useApolloClient } from '@apollo/client/react';
-import { GET_LIST_ITEMS, UPDATE_PRICE, DELETE_ITEM, UPDATE_ALL_FROM_URL, ADD_NEW_MEMBER, ADD_ITEM_TO_LIST, CREATE_INVITATION } from "@/app/api/graphql/operations";
+import { GET_LIST_ITEMS, UPDATE_PRICE, DELETE_ITEM, UPDATE_ALL_FROM_URL, ADD_NEW_MEMBER, ADD_ITEM_TO_LIST, CREATE_INVITATION, GET_ITEM_BY_ID } from "@/app/api/graphql/operations";
 import { useState, useEffect, useRef } from 'react';
 import type { Item } from '@/types/itemType';
 import { useDebounce } from '@/hooks/useDebouncer';
@@ -36,12 +36,13 @@ export function useListItems(listId: number) {
     }, [debouncedSearch, take, skip])
 
     const freshRole = data?.getListItems.listrole;
-    if (freshRole) cachedRole.current = freshRole;  // ← csak felülírja ha van értéke
-
+    if (freshRole) cachedRole.current = freshRole;
+    
     const [updatePrice] = useMutation(UPDATE_PRICE, {
+        refetchQueries: ['GetItemById'],
         onCompleted: (data) => {
             const updatedItem = data.updatePrice;
-            
+
             client.cache.modify({
                 id: client.cache.identify({ __typename: 'Item', id: updatedItem.id }),
                 fields: {
@@ -58,9 +59,12 @@ export function useListItems(listId: number) {
         }
     });
 
-    const [addNewMember, {error: addMemberError}] = useMutation(ADD_NEW_MEMBER);
+    const [addNewMember, { error: addMemberError }] = useMutation(ADD_NEW_MEMBER);
 
-    const [updateAllPriceFromUrl] = useMutation(UPDATE_ALL_FROM_URL)
+    const [updateAllPriceFromUrl] = useMutation(UPDATE_ALL_FROM_URL, {
+        refetchQueries: [GET_ITEM_BY_ID],
+        onCompleted: () => refetch()
+    })
 
     const [createInvitation] = useMutation(CREATE_INVITATION);
 

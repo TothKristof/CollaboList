@@ -14,7 +14,7 @@ import { gql } from "@apollo/client"
 import { useMutation } from "@apollo/client/react"
 import { AnimatePresence, motion } from "motion/react"
 import { useForm, Controller } from "react-hook-form"
-import CustomToaster from '@/components/ErrorToaster'
+import CustomToaster from '@/components/CustomToaster'
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {

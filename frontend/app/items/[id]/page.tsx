@@ -5,11 +5,7 @@ import { useParams } from "next/navigation";
 import { PageWrapper, TopRow, Panel, ItemNameHeader, ItemNumber } from "./item.styles";
 import { Stack } from "@kinsta/stratus";
 import { ItemDetails } from "@/components/ItemDetails";
-
-// const GraphPanel = styled(Panel)({
-//     width: '100%',
-//     minHeight: 450,
-// });
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
 function ItemPage() {
     const params = useParams();
@@ -41,6 +37,16 @@ function ItemPage() {
                     <ItemDetails item={item}></ItemDetails>
                 </Panel>
             </TopRow>
+            <Panel>
+                <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={item.priceHistory}>
+                        <XAxis dataKey="recordedAt" />
+                        <YAxis />
+                        <Tooltip formatter={(value) => value.toLocaleString('hu-HU') + ' Ft'} />
+                        <Area type="monotone" dataKey="price" stroke="#6366f1" fill="#6366f1" fillOpacity={0.1} />
+                    </AreaChart>
+                </ResponsiveContainer>
+            </Panel>
         </PageWrapper>
     );
 }

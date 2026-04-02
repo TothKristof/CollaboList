@@ -6,7 +6,7 @@ export const PageWrapper = styled.div({
     flexDirection: 'column',
     gap: 16,
     padding: 24,
-    height: '100vh',
+    height: '90vh',
     boxSizing: 'border-box',
 });
 

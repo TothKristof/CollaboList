@@ -81,8 +81,13 @@ export const UPDATE_ALL_FROM_URL = gql`
             addDate
             lastUpdatedDate
             list {
-                name
+              name
             }
+            priceHistory {
+              id
+              price
+              recordedAt
+        }
   }
 }
 `;
@@ -184,6 +189,15 @@ export const GET_ITEM_BY_ID = gql`
       addDate
       lastUpdatedDate
       imgLink
+      list {
+        name
+      }
+      priceHistory {
+        id
+        itemId
+        price
+        recordedAt
+    }
     }
   }
 `;
