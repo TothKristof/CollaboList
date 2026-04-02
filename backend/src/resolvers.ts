@@ -122,7 +122,14 @@ export const resolvers = {
     },
 
     addList: async (_: unknown, args: { name: string; category: Category }, context: Context) => {
-      return listService.addNewList(context, args.name, args.category);
+      const user = await prisma.user.findUnique({ where: { id: context.userId as number } });
+      const list = await listService.addNewList(context, args.name, args.category);
+      await activityService.addActivity(context, ActivityCategory.CREATE_LIST, {
+        userId: context.userId as number,
+        username: user!.username,
+        listName: args.name
+      });
+      return list;
     },
 
     updatePrice: async (_: unknown, { itemId, newPrice }: { itemId: number; newPrice: number }, context: Context) => {

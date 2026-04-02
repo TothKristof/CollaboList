@@ -57,6 +57,7 @@ model Item {
 
   addDate         DateTime
   lastUpdatedDate DateTime
+  priceHistory PriceHistory[]
 
   ownerId Int
   owner   User @relation(fields: [ownerId], references: [id])
@@ -87,6 +88,15 @@ model Invitation {
 
   list    List @relation(fields: [listId], references: [id])
   creator User @relation(fields: [createdBy], references: [id])
+}
+
+model PriceHistory {
+  id        Int      @id @default(autoincrement())
+  itemId    Int
+  price     Int
+  recordedAt DateTime @default(now())
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
 
 enum ListRole {

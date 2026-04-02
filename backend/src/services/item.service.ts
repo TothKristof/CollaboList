@@ -72,6 +72,7 @@ async function getItemById(itemId: number, context: Context) {
   try {
     const item = await prisma.item.findUnique({
       where: { id: itemId },
+      include: { list: true, priceHistory: true },
     });
 
     if (!item) throw new NotFoundError("Item");
@@ -105,10 +106,16 @@ async function getUserRecentlyAddedItems(context: Context) {
 
 async function updatePriceOfItem(itemId: number, newPrice: number) {
   try {
-    return await prisma.item.update({
-      where: { id: itemId },
-      data: { price: newPrice, lastUpdatedDate: new Date() },
-    });
+    const [updatedItem] = await prisma.$transaction([
+      prisma.item.update({
+        where: { id: itemId },
+        data: { price: newPrice, lastUpdatedDate: new Date() },
+      }),
+      prisma.priceHistory.create({
+        data: { itemId, price: newPrice },
+      }),
+    ]);
+    return updatedItem;
   } catch (error) {
     handlePrismaError(error);
   }
@@ -178,10 +185,7 @@ async function updateAllPricesFromUrl(context: Context, listId: number) {
     const results = await Promise.allSettled(
       items.map(async (item) => {
         const numericPrice = await fetchPriceFromUrl(item.link);
-        return prisma.item.update({
-          where: { id: item.id },
-          data: { price: numericPrice, lastUpdatedDate: new Date() },
-        });
+        return updatePriceOfItem(item.id, numericPrice);
       })
     );
 
@@ -228,7 +232,10 @@ async function addItemToList(
         addDate: new Date(),
         lastUpdatedDate: new Date(),
         owner: { connect: { id: context.userId as number } },
-        list: { connect: { id: listId } }
+        list: { connect: { id: listId } },
+        priceHistory: {               
+          create: { price }
+        }
       }
     });
 

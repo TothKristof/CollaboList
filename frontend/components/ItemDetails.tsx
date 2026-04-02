@@ -8,6 +8,7 @@ import {
     ClockIcon,
 } from 'lucide-react'
 import { Item } from '@/types/itemType'
+import { categories } from '@/data/categories'
 
 interface ItemDetailsProps {
     item: Item
@@ -139,6 +140,7 @@ const styles = {
 }
 
 export function ItemDetails({ item }: ItemDetailsProps) {
+    console.log(item)
     const formatPrice = (price: number) => {
         return price.toLocaleString('hu-HU') + ' Ft'
     }
@@ -151,6 +153,9 @@ export function ItemDetails({ item }: ItemDetailsProps) {
         }).format(new Date(dateString))
     }
 
+    const category = categories[item.category]
+    const color = category.color
+
     return (
         <div css={styles.container}>
             <div css={styles.header}>
@@ -160,19 +165,17 @@ export function ItemDetails({ item }: ItemDetailsProps) {
 
             <div css={styles.body}>
                 <div css={styles.grid}>
-                    {/* Category */}
                     <div css={styles.field}>
                         <div css={styles.fieldLabel}>
                             <TagIcon />
                             Category
                         </div>
                         <div css={styles.categoryValue}>
-                            <span css={styles.categoryDot(item.category)} />
-                            <span css={styles.fieldValue}>{item.category.name}</span>
+                            <span css={styles.categoryDot(color)} />
+                            <span css={styles.fieldValue}>{item.category}</span>
                         </div>
                     </div>
 
-                    {/* List */}
                     <div css={styles.field}>
                         <div css={styles.fieldLabel}>
                             <ListIcon />
@@ -187,7 +190,6 @@ export function ItemDetails({ item }: ItemDetailsProps) {
                         </div>
                     </div>
 
-                    {/* Added Date */}
                     <div css={styles.field}>
                         <div css={styles.fieldLabel}>
                             <CalendarIcon />
@@ -196,7 +198,6 @@ export function ItemDetails({ item }: ItemDetailsProps) {
                         <div css={styles.fieldValue}>{formatDate(item.addDate)}</div>
                     </div>
 
-                    {/* Last Updated */}
                     <div css={styles.field}>
                         <div css={styles.fieldLabel}>
                             <ClockIcon />

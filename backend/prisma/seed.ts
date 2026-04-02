@@ -14,6 +14,8 @@ async function addSeedActivity(userId: number, category: ActivityCategory, messa
 }
 
 async function main() {
+  await prisma.invitation.deleteMany();
+  await prisma.priceHistory.deleteMany();
   await prisma.listUser.deleteMany();
   await prisma.activity.deleteMany();
   await prisma.item.deleteMany();
@@ -39,113 +41,137 @@ async function main() {
     },
   });
 
-  const mouse = await prisma.item.create({
-    data: {
-      ownerId: user1.id,
-      name: "Logitech G305 Lightspeed Wireless Mouse",
-      price: 17990,
-      category: Category.Gaming,
-      addDate: new Date("2025-01-10"),
-      lastUpdatedDate: new Date("2025-01-10"),
-      link: "https://eger.arukereso.hu/logitech/g305-lightspeed-black-910-005282-p412572665/",
-    },
-  });
+const mouse = await prisma.item.create({
+  data: {
+    ownerId: user1.id,
+    name: "Logitech G305 Lightspeed Wireless Mouse",
+    price: 17990,
+    category: Category.Gaming,
+    addDate: new Date("2025-01-10"),
+    lastUpdatedDate: new Date("2025-01-10"),
+    link: "https://eger.arukereso.hu/logitech/g305-lightspeed-black-910-005282-p412572665/",
+    priceHistory: {
+      create: [
+        { price: 22990, recordedAt: new Date("2025-01-10") },
+        { price: 21500, recordedAt: new Date("2025-02-03") },
+        { price: 21500, recordedAt: new Date("2025-02-28") },
+        { price: 20990, recordedAt: new Date("2025-03-15") },
+        { price: 19990, recordedAt: new Date("2025-04-02") },
+        { price: 20490, recordedAt: new Date("2025-05-18") },
+        { price: 19490, recordedAt: new Date("2025-06-30") },
+        { price: 18990, recordedAt: new Date("2025-08-11") },
+        { price: 18490, recordedAt: new Date("2025-10-05") },
+        { price: 17990, recordedAt: new Date("2025-12-20") },
+      ]
+    }
+  },
+});
 
-  const keyboard = await prisma.item.create({
-    data: {
-      ownerId: user1.id,
-      name: "Keychron B6 Pro",
-      price: 34990,
-      category: Category.Gaming,
-      addDate: new Date("2025-01-11"),
-      lastUpdatedDate: new Date("2025-01-11"),
-      link: "https://www.arukereso.hu/billentyuzet-c3111/keychron/b6-pro-hu-b6p-k1-hg-p1177012114/",
-    },
-  });
 
-  const headphones = await prisma.item.create({
-    data: {
-      ownerId: user1.id,
-      name: "Sony WH-1000XM5 Noise Cancelling Headphones",
-      price: 139990,
-      category: Category.Technology,
-      addDate: new Date("2025-01-12"),
-      lastUpdatedDate: new Date("2025-01-12"),
-      link: "https://www.arukereso.hu/fulhallgato-fejhallgato-c3109/sony/wh-1000xm5-p917190654/",
-    },
-  });
 
-  const headset = await prisma.item.create({
-    data: {
-      ownerId: user1.id,
-      name: "SteelSeries Arctis 7 Wireless Headset",
-      price: 45990,
-      category: Category.Gaming,
-      addDate: new Date("2025-01-12"),
-      lastUpdatedDate: new Date("2025-01-12"),
-      link: "https://www.arukereso.hu/fulhallgato-fejhallgato-c3109/steelseries/arctis-7-p371749776/",
-    },
-  });
+const keyboard = await prisma.item.create({
+  data: {
+    ownerId: user1.id,
+    name: "Keychron B6 Pro",
+    price: 34990,
+    category: Category.Gaming,
+    addDate: new Date("2025-01-11"),
+    lastUpdatedDate: new Date("2025-01-11"),
+    link: "https://www.arukereso.hu/billentyuzet-c3111/keychron/b6-pro-hu-b6p-k1-hg-p1177012114/",
+    priceHistory: { create: { price: 34990, recordedAt: new Date("2025-01-11") } }
+  },
+});
 
-  const monitor = await prisma.item.create({
-    data: {
-      ownerId: user1.id,
-      name: "ASUS TUF Gaming VG27AQ Monitor",
-      price: 129990,
-      category: Category.Gaming,
-      addDate: new Date("2025-01-13"),
-      lastUpdatedDate: new Date("2025-01-13"),
-      link: "https://www.arukereso.hu/monitor-c3126/asus/tuf-gaming-vg27aq-p484737584/",
-    },
-  });
+const headphones = await prisma.item.create({
+  data: {
+    ownerId: user1.id,
+    name: "Sony WH-1000XM5 Noise Cancelling Headphones",
+    price: 139990,
+    category: Category.Technology,
+    addDate: new Date("2025-01-12"),
+    lastUpdatedDate: new Date("2025-01-12"),
+    link: "https://www.arukereso.hu/fulhallgato-fejhallgato-c3109/sony/wh-1000xm5-p917190654/",
+    priceHistory: { create: { price: 139990, recordedAt: new Date("2025-01-12") } }
+  },
+});
 
-  const mousepad = await prisma.item.create({
-    data: {
-      ownerId: user1.id,
-      name: "SteelSeries QcK Heavy XXL Mousepad",
-      price: 9990,
-      category: Category.Gaming,
-      addDate: new Date("2025-01-15"),
-      lastUpdatedDate: new Date("2025-01-15"),
-      link: "https://www.arukereso.hu/egerpad-c4134/steelseries/qck-heavy-xxl-p254783552/",
-    },
-  });
+const headset = await prisma.item.create({
+  data: {
+    ownerId: user1.id,
+    name: "SteelSeries Arctis 7 Wireless Headset",
+    price: 45990,
+    category: Category.Gaming,
+    addDate: new Date("2025-01-12"),
+    lastUpdatedDate: new Date("2025-01-12"),
+    link: "https://www.arukereso.hu/fulhallgato-fejhallgato-c3109/steelseries/arctis-7-p371749776/",
+    priceHistory: { create: { price: 45990, recordedAt: new Date("2025-01-12") } }
+  },
+});
 
-  const ssd = await prisma.item.create({
-    data: {
-      ownerId: user2.id,
-      name: "Samsung 970 EVO Plus 2TB NVMe SSD",
-      price: 32990,
-      category: Category.Technology,
-      addDate: new Date("2025-01-13"),
-      lastUpdatedDate: new Date("2025-01-13"),
-      link: "https://belso-ssd-meghajto.arukereso.hu/samsung/990-evo-2tb-m-2-mz-v9e2t0bw-p1043179693/",
-    },
-  });
+const monitor = await prisma.item.create({
+  data: {
+    ownerId: user1.id,
+    name: "ASUS TUF Gaming VG27AQ Monitor",
+    price: 129990,
+    category: Category.Gaming,
+    addDate: new Date("2025-01-13"),
+    lastUpdatedDate: new Date("2025-01-13"),
+    link: "https://www.arukereso.hu/monitor-c3126/asus/tuf-gaming-vg27aq-p484737584/",
+    priceHistory: { create: { price: 129990, recordedAt: new Date("2025-01-13") } }
+  },
+});
 
-  const controller = await prisma.item.create({
-    data: {
-      ownerId: user2.id,
-      name: "Xbox Wireless Controller Series X",
-      price: 21990,
-      category: Category.Gaming,
-      addDate: new Date("2025-01-14"),
-      lastUpdatedDate: new Date("2025-01-14"),
-      link: "https://gamepad-kontroller.arukereso.hu/microsoft/xbox-series-x-s-wireless-controller-robot-white-qas-00009-p590841822/",
-    },
-  });
+const mousepad = await prisma.item.create({
+  data: {
+    ownerId: user1.id,
+    name: "SteelSeries QcK Heavy XXL Mousepad",
+    price: 9990,
+    category: Category.Gaming,
+    addDate: new Date("2025-01-15"),
+    lastUpdatedDate: new Date("2025-01-15"),
+    link: "https://www.arukereso.hu/egerpad-c4134/steelseries/qck-heavy-xxl-p254783552/",
+    priceHistory: { create: { price: 9990, recordedAt: new Date("2025-01-15") } }
+  },
+});
 
-  const hue = await prisma.item.create({
-    data: {
-      ownerId: user1.id,
-      name: "Philips Hue White and Color Ambiance Starter Kit",
-      price: 69990,
-      category: Category.HomeLiving,
-      addDate: new Date("2025-01-16"),
-      lastUpdatedDate: new Date("2025-01-16"),
-      link: "https://www.arukereso.hu/CategorySearch.php?st=Philips+Hue+Starter+Kit",
-    },
-  });
+const ssd = await prisma.item.create({
+  data: {
+    ownerId: user2.id,
+    name: "Samsung 970 EVO Plus 2TB NVMe SSD",
+    price: 32990,
+    category: Category.Technology,
+    addDate: new Date("2025-01-13"),
+    lastUpdatedDate: new Date("2025-01-13"),
+    link: "https://belso-ssd-meghajto.arukereso.hu/samsung/990-evo-2tb-m-2-mz-v9e2t0bw-p1043179693/",
+    priceHistory: { create: { price: 32990, recordedAt: new Date("2025-01-13") } }
+  },
+});
+
+const controller = await prisma.item.create({
+  data: {
+    ownerId: user2.id,
+    name: "Xbox Wireless Controller Series X",
+    price: 21990,
+    category: Category.Gaming,
+    addDate: new Date("2025-01-14"),
+    lastUpdatedDate: new Date("2025-01-14"),
+    link: "https://gamepad-kontroller.arukereso.hu/microsoft/xbox-series-x-s-wireless-controller-robot-white-qas-00009-p590841822/",
+    priceHistory: { create: { price: 21990, recordedAt: new Date("2025-01-14") } }
+  },
+});
+
+const hue = await prisma.item.create({
+  data: {
+    ownerId: user1.id,
+    name: "Philips Hue White and Color Ambiance Starter Kit",
+    price: 69990,
+    category: Category.HomeLiving,
+    addDate: new Date("2025-01-16"),
+    lastUpdatedDate: new Date("2025-01-16"),
+    link: "https://www.arukereso.hu/CategorySearch.php?st=Philips+Hue+Starter+Kit",
+    priceHistory: { create: { price: 69990, recordedAt: new Date("2025-01-16") } }
+  },
+});
 
   await prisma.list.create({
     data: {

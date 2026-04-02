@@ -45,6 +45,13 @@ async function getListById(context: Context, id: number) {
   requireAuth(context);
 
   try {
+    const list = await prisma.list.findUnique({
+      where: { id },
+      include: { items: true }
+    });
+
+    if (!list) throw new NotFoundError("List");
+
     const listUser = await prisma.listUser.findUnique({
       where: {
         userId_listId: {
@@ -56,13 +63,6 @@ async function getListById(context: Context, id: number) {
 
     if (!listUser) throw new UnauthorizedError();
 
-    const list = await prisma.list.findUnique({
-      where: { id },
-      include: { items: true }
-    });
-
-    if (!list) throw new NotFoundError("List");
-
     return list;
   } catch (error) {
     if (error instanceof NotFoundError || error instanceof UnauthorizedError) throw error;
@@ -72,9 +72,6 @@ async function getListById(context: Context, id: number) {
 
 async function addNewList(context: Context, name: string, category: Category) {
   requireAuth(context);
-
-  const user = await prisma.user.findUnique({ where: { id: context.userId as number } });
-
   try {
     const list = await prisma.list.create({
       data: {
@@ -88,12 +85,6 @@ async function addNewList(context: Context, name: string, category: Category) {
         items: true,
         listUsers: true,
       },
-    });
-
-    await activityService.addActivity(context, ActivityCategory.CREATE_LIST, {
-      userId: context.userId as number,
-      username: user!.username,
-      listName: name
     });
 
     return list;
@@ -140,13 +131,27 @@ async function addNewMemberToList(context: Context, userId: number, listId: numb
   }
 }
 
-async function getListMembers(listId: number) {
+async function getListMembers(context: Context, listId: number) {
+  requireAuth(context);
+
   try {
+    const membership = await prisma.listUser.findUnique({
+      where: {
+        userId_listId: {
+          userId: context.userId!,
+          listId,
+        }
+      }
+    });
+
+    if (!membership) throw new UnauthorizedError();
+
     return await prisma.listUser.findMany({
-      where: { listId: listId },
+      where: { listId },
       include: { user: true }
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) throw error;
     handlePrismaError(error);
   }
 }

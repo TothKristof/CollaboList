@@ -1,8 +1,11 @@
 import { prisma } from "../../prismaClient";
 
 export async function resetDatabase() {
-  await prisma.item.deleteMany();
+  await prisma.invitation.deleteMany();
+  await prisma.priceHistory.deleteMany();
+  await prisma.activity.deleteMany();
   await prisma.listUser.deleteMany();
+  await prisma.item.deleteMany();
   await prisma.list.deleteMany();
   await prisma.user.deleteMany();
 }

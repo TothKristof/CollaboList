@@ -1,18 +1,13 @@
 import { prisma } from "../../prismaClient";
 import bcrypt from "bcrypt";
-
-let userCount = 0;
-
-export function resetUserCount(){
- userCount = 0;
-}
+import { randomUUID } from 'crypto'
 
 export async function seedUser() {
-  userCount++;
   return prisma.user.create({
     data: {
-      email: `test${userCount}@test.com`,
+      email: `test-${randomUUID()}@test.com`,
       password: await bcrypt.hash("password123", 10),
+      username: 'TestMember'
     },
   });
 }

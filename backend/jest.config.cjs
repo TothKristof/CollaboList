@@ -1,8 +1,16 @@
 module.exports = {
+  maxWorkers: 1,
   preset: "ts-jest/presets/default-esm",
   testEnvironment: "node",
   setupFiles: ["<rootDir>/src/tests/helpers/loadEnv.ts"],
   extensionsToTreatAsEsm: [".ts"],
+  collectCoverage: true,
+  collectCoverageFrom: [
+    "src/services/**/*.ts",
+    "src/utils/**/*.ts",
+  ],
+  coverageDirectory: "coverage",
+  coverageReporters: ["text", "lcov"],
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },

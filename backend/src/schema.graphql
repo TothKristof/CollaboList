@@ -13,6 +13,13 @@ type List {
   items: [Item!]!
 }
 
+type PriceHistory {
+  id: Int!
+  itemId: Int!
+  price: Int!
+  recordedAt: Date!
+}
+
 type Item {
   id: Int!
   name: String!
@@ -23,6 +30,7 @@ type Item {
   lastUpdatedDate: Date!
   list: List,
   imgLink: String
+  priceHistory: [PriceHistory]
 }
 
 enum Category {
