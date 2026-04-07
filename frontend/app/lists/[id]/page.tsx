@@ -7,6 +7,7 @@ import ItemTable from '@/components/ItemTable';
 import { Item } from '@/types/itemType';
 import { useListItems } from '@/app/features/lists/useListItems';
 import ListHeader from '@/components/ListHeader';
+import CustomToaster from '@/components/CustomToaster';
 
 
 type EditPriceArgs = {
@@ -19,7 +20,7 @@ function ListPage() {
     const listId = Number(params.id);
 
     const {
-        error,
+        getListItemsError,
         items,
         updatePrice,
         deleteItem,
@@ -27,8 +28,6 @@ function ListPage() {
 
     } =
         useListItems(listId);
-
-    if (error) return `Error! ${error.message}`;
 
     function editPrice({
         itemId,
@@ -39,6 +38,14 @@ function ListPage() {
 
     return (
         <CenterContentDiv>
+            {getListItemsError && (
+                <CustomToaster
+                    isOpen={getListItemsError !== undefined}
+                    text={getListItemsError.message}
+                    title="Get list items error"
+                    type="error"
+                />
+            )}
             <ListDiv>
                 <ListHeader listId={listId}></ListHeader>
                 <ItemTable

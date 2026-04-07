@@ -31,6 +31,8 @@ type Item {
   list: List,
   imgLink: String
   priceHistory: [PriceHistory]
+  lowestPrice: Int
+  priceDifference: Float
 }
 
 enum Category {
@@ -93,10 +95,11 @@ type Invitation {
   list: List!
 }
 
-type ListUser{
+type ListUser {
   userId: Int!
   listId: Int!
-  listRole: ListRole!
+  role: ListRole!
+  user: User
 }
 
 type ListMember {

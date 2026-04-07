@@ -9,41 +9,16 @@ import RecentlyAddedItemDiv from '@/components/RecentlyAddedItemDiv';
 import { CustomCard } from '../global.styles';
 import ListListingDiv from '@/components/ListListingDiv';
 import PieChartComponent from '@/components/PieChart';
-import { gql } from "@apollo/client";
 import useHomeInformations from '../features/home/useHomeInformations';
 import RecentActivity from "@/components/RecentActivity";
 import { usePathname } from 'next/navigation'
 import { useEffect } from "react";
 import Loading from "@/components/Loading";
-
-const USER_DATAS = gql`
-  query GetUserData{
-      userData {
-        items {
-          id
-          name
-          price
-          category
-          link
-          addDate
-          lastUpdatedDate
-          list {
-            name
-          }
-        }
-        lists {
-          id
-          category
-          name
-        }
-      } 
-  }
-`;
-
+import CustomToaster from "@/components/CustomToaster";
 
 function page() {
   const pathname = usePathname()
-  const {items, lists, activities, refetch, loading } =
+  const { items, lists, activities, refetch, loading, userDatasError } =
     useHomeInformations();
 
   useEffect(() => {
@@ -58,6 +33,14 @@ function page() {
 
   return (
     <PageWrapper>
+      {userDatasError && (
+        <CustomToaster
+          isOpen={userDatasError !== undefined}
+          text={userDatasError.message}
+          title="Get user data error"
+          type="error"
+        />
+      )}
       {(lists && items) && (
         <ContentWrapper>
           <MainColumn>

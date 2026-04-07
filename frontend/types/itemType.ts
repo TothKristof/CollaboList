@@ -10,5 +10,8 @@ export interface Item {
     addDate: Date,
     list: List,
     lastUpdatedDate: Date,
-    link: string;
+    link: string,
+    lowestPrice: number
+    priceDifference: number
+    imgLink: string
 }

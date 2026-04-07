@@ -3,7 +3,7 @@ import { GET_ITEM_BY_ID } from '@/app/api/graphql/operations';
 
 export function useItems(itemId: number) {
 
-    const { loading, error, data, refetch } = useQuery(
+    const { loading, error: getItemError, data, refetch } = useQuery(
         GET_ITEM_BY_ID,
         {
             skip: !itemId,
@@ -14,6 +14,9 @@ export function useItems(itemId: number) {
     );
 
     return{
+        loading,
+        getItemError,
+        refetch,
         item: data?.getItemById
     }
 }

@@ -9,6 +9,7 @@ import { gql } from "@apollo/client";
 import { useQuery, useMutation } from "@apollo/client/react";
 import NoData from './NoData';
 import useListAdd from '@/app/features/lists/useListAdd';
+import CustomToaster from './CustomToaster';
 
 const ListsDiv = styled.div<{ scrollable: boolean }>((props) => ({
     display: 'flex',
@@ -88,13 +89,29 @@ function ListListingDiv({ lists }: ListsDivProps) {
     const [newListName, setNewListName] = useState("")
     const [newListCategory, setNewListCategory] = useState("")
     const [invitationLink, setInvitationLink] = useState("")
-    const { addList, acceptInvitation } = useListAdd()
+    const { addList, addListError, acceptInvitation, acceptInvitationError } = useListAdd()
 
     const hasLists = lists.length > 0
     const isScrollable = lists.length > 5
 
     return (
         <>
+            {addListError && (
+                <CustomToaster
+                    isOpen={addListError !== undefined}
+                    text={addListError.message}
+                    title="Add list error"
+                    type="error"
+                />
+            )}
+            {acceptInvitationError && (
+                <CustomToaster
+                    isOpen={acceptInvitationError !== undefined}
+                    text={acceptInvitationError.message}
+                    title="Accept invitation error"
+                    type="error"
+                />
+            )}
             <ListsDiv scrollable={isScrollable}>
                 <ListDiv onClick={() => setIsVisible(true)}>
                     <Plus size={48} />

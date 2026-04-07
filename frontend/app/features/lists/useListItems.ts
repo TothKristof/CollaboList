@@ -13,7 +13,7 @@ export function useListItems(listId: number) {
     const debouncedSearch = useDebounce(searchText, 300);
     const cachedRole = useRef<string | null>(null);
 
-    const { loading, error, data, refetch } = useQuery(
+    const { loading, error: getListItemsError, data, refetch } = useQuery(
         GET_LIST_ITEMS,
         {
             skip: !listId,
@@ -38,7 +38,7 @@ export function useListItems(listId: number) {
     const freshRole = data?.getListItems.listrole;
     if (freshRole) cachedRole.current = freshRole;
     
-    const [updatePrice] = useMutation(UPDATE_PRICE, {
+    const [updatePrice, { error: updatePriceError }] = useMutation(UPDATE_PRICE, {
         refetchQueries: ['GetItemById'],
         onCompleted: (data) => {
             const updatedItem = data.updatePrice;
@@ -53,20 +53,20 @@ export function useListItems(listId: number) {
         }
     });
 
-    const [deleteItem] = useMutation(DELETE_ITEM, {
+    const [deleteItem, { error: deleteItemError }] = useMutation(DELETE_ITEM, {
         onCompleted: () => {
             refetch()
         }
     });
 
-    const [addNewMember, { error: addMemberError }] = useMutation(ADD_NEW_MEMBER);
+    const [addNewMember, { error: addNewMemberError }] = useMutation(ADD_NEW_MEMBER);
 
-    const [updateAllPriceFromUrl] = useMutation(UPDATE_ALL_FROM_URL, {
+    const [updateAllPriceFromUrl, { error: updateAllPriceFromUrlError }] = useMutation(UPDATE_ALL_FROM_URL, {
         refetchQueries: [GET_ITEM_BY_ID],
         onCompleted: () => refetch()
     })
 
-    const [createInvitation] = useMutation(CREATE_INVITATION);
+    const [createInvitation, { error: createInvitationError }] = useMutation(CREATE_INVITATION);
 
     const handleUpdateAllPrices = async () => {
         const currentItems = data?.getListItems.items ?? [];
@@ -102,16 +102,19 @@ export function useListItems(listId: number) {
         setPriceDiffMap(diffMap);
     };
 
-    const [addItemToList] = useMutation(ADD_ITEM_TO_LIST);
+    const [addItemToList, { error: addItemToListError }] = useMutation(ADD_ITEM_TO_LIST);
 
     return {
         loading,
-        error,
+        getListItemsError,
         items: data?.getListItems.items ?? [],
         listName: data?.getListItems.name,
         updatePrice,
+        updatePriceError,
         deleteItem,
+        deleteItemError,
         handleUpdateAllPrices,
+        updateAllPriceFromUrlError,
         priceDiffMap,
         refetchItems: refetch,
         setSearchText,
@@ -123,8 +126,10 @@ export function useListItems(listId: number) {
         totalCount: data?.getListItems.totalCount,
         addNewMember,
         addItemToList,
-        addMemberError,
+        addNewMemberError,
+        addItemToListError,
         role: cachedRole.current,
-        createInvitation
+        createInvitation,
+        createInvitationError
     };
 }

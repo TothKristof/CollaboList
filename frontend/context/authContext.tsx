@@ -89,8 +89,8 @@ const logout = async () => {
   });
 
   setUser(null);
-
   await client.clearStore();
+  router.replace("/login");
 };
 
 

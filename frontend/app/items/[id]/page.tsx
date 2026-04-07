@@ -6,18 +6,39 @@ import { PageWrapper, TopRow, Panel, ItemNameHeader, ItemNumber } from "./item.s
 import { Stack } from "@kinsta/stratus";
 import { ItemDetails } from "@/components/ItemDetails";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import CustomToaster from "@/components/CustomToaster";
 
 function ItemPage() {
     const params = useParams();
     const itemId = Number(params.id);
-    const { item } = useItems(itemId)
+    const { item, getItemError } = useItems(itemId)
 
     if (!item) {
-        return "hy"
+        return (
+            <PageWrapper>
+                {getItemError && (
+                    <CustomToaster
+                        isOpen={getItemError !== undefined}
+                        text={getItemError.message}
+                        title="Get item error"
+                        type="error"
+                    />
+                )}
+                <div>Item is not available.</div>
+            </PageWrapper>
+        )
     }
 
     return (
         <PageWrapper>
+            {getItemError && (
+                <CustomToaster
+                    isOpen={getItemError !== undefined}
+                    text={getItemError.message}
+                    title="Get item error"
+                    type="error"
+                />
+            )}
             <div>
                 <ItemNameHeader>{item.name}</ItemNameHeader>
                 <ItemNumber className="text-slate-500 mt-2 text-sm sm:text-base font-medium">

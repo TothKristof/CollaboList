@@ -69,8 +69,8 @@ export const resolvers = {
       return userService.findUserByText(args.searchText);
     },
 
-    getListMembers: async (_, { listId }) => {
-      return listService.getListMembers(listId);
+    getListMembers: async (_, { listId }, context: Context) => {
+      return listService.getListMembers(context, listId);
     },
 
     getItemDetailsFromUrl: async (_, { url }) => {
@@ -145,7 +145,7 @@ export const resolvers = {
 
       const updated = await itemService.updatePriceOfItem(itemId, newPrice);
 
-      await activityService.addActivity(context, ActivityCategory.UPDATE_ITEM, {
+      await activityService.addActivityForListMembers(context, list.id, ActivityCategory.UPDATE_ITEM, {
         userId: context.userId as number,
         username: user!.username,
         itemName: item.name,
@@ -205,7 +205,7 @@ export const resolvers = {
       });
       if (existing) throw new Error('Already a member');
 
-      const [member] = await prisma.$transaction([
+      await prisma.$transaction([
         prisma.listUser.create({
           data: { listId: invitation.listId, userId, role: invitation.role }
         }),
@@ -215,7 +215,10 @@ export const resolvers = {
         })
       ]);
 
-      return member;
+      return prisma.listUser.findUnique({
+        where: { userId_listId: { userId, listId: invitation.listId } },
+        include: { user: true }
+      });
     }
   },
 };

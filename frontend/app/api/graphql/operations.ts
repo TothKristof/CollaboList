@@ -158,10 +158,16 @@ export const CREATE_INVITATION = gql`
 export const ACCEPT_INVITATION = gql`
     mutation AcceptInvitation($token: String!) {
       acceptInvitation(token: $token) {
-        id
-        email
-        username
-      }
+            userId
+    listId
+    role
+    user {
+      id
+      email
+      username
+    }
+  }
+      
     }
 `;
 
@@ -189,6 +195,8 @@ export const GET_ITEM_BY_ID = gql`
       addDate
       lastUpdatedDate
       imgLink
+      lowestPrice
+      priceDifference
       list {
         name
       }

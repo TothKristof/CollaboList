@@ -36,7 +36,7 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
     const [selectedRole, setSelectedRole] = useState<AssignableListRole>("GUEST")
     const [link, setLink] = useState<string | null>(null);
 
-    const { addNewMember, addMemberError, createInvitation } = useListItems(listId);
+    const { addNewMember, addNewMemberError, createInvitation } = useListItems(listId);
 
     const { fetchUsers, members, refetch } = useFetchMembers()
 
@@ -61,7 +61,7 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
         const { data } = await createInvitation({
             variables: { listId, role: selectedRole }
         });
-        setLink(`${window.location.origin}/invite/accept?token=${data.createInvitation.token}`);
+        setLink(data.createInvitation.token);
     };
 
     return (
@@ -121,10 +121,10 @@ function AddMemberModal({ isVisible, setIsVisible, listId }: AddNewMemberProps) 
                     ))}
                 </div>
             </Stack>
-            {addMemberError &&
+            {addNewMemberError &&
                 <CustomToaster
-                    isOpen={addMemberError !== undefined}
-                    text={addMemberError.message}
+                    isOpen={addNewMemberError !== undefined}
+                    text={addNewMemberError.message}
                     title='Add member error'
                     type="error"
                 ></CustomToaster>}

@@ -13,6 +13,7 @@ import { requireAuth } from "../utils/auth";
 import { listService } from "./list.service";
 import { activityService } from "./activity.service";
 import { ActivityCategory } from "../generated/prisma";
+import { calculateEveryDayLowestPrice, calculatePriceDifferencePercentage } from "../utils/priceCalculations";
 
 async function fetchPriceFromUrl(url: string): Promise<number> {
   let html: string;
@@ -76,8 +77,23 @@ async function getItemById(itemId: number, context: Context) {
     });
 
     if (!item) throw new NotFoundError("Item");
+    
+    const dailyMinPriceHistory = calculateEveryDayLowestPrice(item.priceHistory);
 
-    return item;
+    const lowestPrice = dailyMinPriceHistory.length > 0
+      ? Math.min(...dailyMinPriceHistory.map((p) => p.price))
+      : null;
+
+    const priceDifference = lowestPrice !== null && lowestPrice !== 0
+      ? calculatePriceDifferencePercentage(item.price, lowestPrice)
+      : null;
+
+    return {
+      ...item,
+      priceHistory: dailyMinPriceHistory,
+      lowestPrice,
+      priceDifference,
+    };
   } catch (error) {
     if (error instanceof NotFoundError) throw error;
     handlePrismaError(error);
@@ -233,7 +249,7 @@ async function addItemToList(
         lastUpdatedDate: new Date(),
         owner: { connect: { id: context.userId as number } },
         list: { connect: { id: listId } },
-        priceHistory: {               
+        priceHistory: {
           create: { price }
         }
       }
